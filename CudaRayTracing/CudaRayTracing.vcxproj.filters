@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="rt">
+      <UniqueIdentifier>{f10d9dbf-ac9e-4819-b38b-3258bad5b7a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="img">
+      <UniqueIdentifier>{fcf40063-947d-4170-b7bf-5388f41e4add}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="rt\image.h">
+      <Filter>rt</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="main.cu" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="img\ch2.png">
+      <Filter>img</Filter>
+    </Image>
+  </ItemGroup>
+</Project>
