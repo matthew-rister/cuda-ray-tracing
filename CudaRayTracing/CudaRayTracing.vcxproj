@@ -17,10 +17,12 @@
     <ClInclude Include="rt\camera.h" />
     <ClInclude Include="rt\ray.h" />
     <ClInclude Include="rt\image.h" />
+    <ClInclude Include="rt\sphere.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="img\ch2.png" />
     <Image Include="img\ch4.png" />
+    <Image Include="img\ch5.png" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{EC098A88-B4A7-4592-BD8F-B8053FA17934}</ProjectGuid>
@@ -78,7 +80,7 @@
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
       <Include>$(ProjectDir)</Include>
-      <Defines>STB_IMAGE_WRITE_IMPLEMENTATION</Defines>
+      <Defines>STB_IMAGE_WRITE_IMPLEMENTATION;GLM_FORCE_SILENT_WARNINGS</Defines>
       <AdditionalOptions>-std=c++17 -Xcompiler "/std:c++17"  -Xcudafe --diag_suppress=20012 %(AdditionalOptions)</AdditionalOptions>
       <Warning>W4</Warning>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
@@ -108,7 +110,7 @@
       <TargetMachinePlatform>64</TargetMachinePlatform>
       <Include>
       </Include>
-      <Defines>STB_IMAGE_WRITE_IMPLEMENTATION</Defines>
+      <Defines>STB_IMAGE_WRITE_IMPLEMENTATION;GLM_FORCE_SILENT_WARNINGS</Defines>
       <AdditionalOptions>-std=c++17 -Xcompiler "/std:c++17"  -Xcudafe --diag_suppress=20012 %(AdditionalOptions)</AdditionalOptions>
       <Optimization>O2</Optimization>
       <Warning>W4</Warning>

@@ -18,6 +18,9 @@
     <ClInclude Include="rt\camera.h">
       <Filter>rt</Filter>
     </ClInclude>
+    <ClInclude Include="rt\sphere.h">
+      <Filter>rt</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="main.cu" />
@@ -29,5 +32,6 @@
     <Image Include="img\ch4.png">
       <Filter>img</Filter>
     </Image>
+    <Image Include="img\ch5.png" />
   </ItemGroup>
 </Project>
