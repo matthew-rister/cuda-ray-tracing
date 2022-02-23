@@ -1,83 +1,90 @@
-﻿#include <cstdlib>
+﻿#include <cstdint>
+#include <cstdlib>
+#include <cstring>
 #include <iostream>
-#include <sstream>
+#include <memory>
 #include <string_view>
 
-#include <glm/vec3.hpp>
-#include "cuda_runtime.h"
-#include "device_launch_parameters.h"
+#include <cuda_runtime.h>
+#include <device_launch_parameters.h>
+#include <fmt/core.h>
+#include <glm/glm.hpp>
 
+#include "rt/camera.h"
 #include "rt/image.h"
+#include "rt/ray.h"
 
-#define CHECK_CUDA_ERRORS(error) CheckCudaErrors((error), __FUNCTION__, __FILE__, __LINE__)
+using namespace fmt;
+using namespace glm;
+using namespace rt;
+using namespace std;
 
-void CheckCudaErrors(const cudaError_t error, const std::string_view function, const std::string_view file, const int line) {
-	if (error != cudaSuccess) {
-		std::ostringstream oss;
-		oss << function << " at " << file << ':' << line << " failed with error code " << error;
-		throw std::runtime_error{oss.str()};
+#define __FILENAME__ (strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__)
+#define CHECK_CUDA_ERRORS(status) CheckCudaErrors((status), #status, __FILENAME__, __LINE__)
+
+void CheckCudaErrors(
+	const cudaError_t status, const std::string_view function, const std::string_view filename, const int line_number) {
+
+	if (status != cudaSuccess) {
+		throw std::runtime_error{
+			format("{} failed at {}:{} with error \"{}\"", function, filename, line_number, cudaGetErrorString(status))
+		};
 	}
 }
 
-__device__ __host__ constexpr int GetFrameBufferIndex(const int i, const int j, const int width, const int channels) {
-	return i * width * channels + j * channels;
+__device__ glm::vec3 ComputeRayColor(const rt::Ray& ray) noexcept {
+	const auto t = .5f * (ray.direction().y + 1.f);
+	return (1.f - t) * glm::vec3{1.f} + t * glm::vec3{.5f, .7f, 1.f};
 }
 
-__global__ void Render(
-	std::uint8_t* const frame_buffer,
-	const int width,
-	const int height,
-	const int channels,
-	const std::uint8_t max_color_value) {
-
-	const auto i = blockIdx.y * blockDim.y + threadIdx.y;
-	const auto j = blockIdx.x * blockDim.x + threadIdx.x;
+__global__ void Render(const rt::Image image, const rt::Camera camera, std::uint8_t* const frame_buffer) {
+	const auto [width, height, channels, max_color_value] = image;
+	const auto i = static_cast<int>(blockIdx.y * blockDim.y + threadIdx.y);
+	const auto j = static_cast<int>(blockIdx.x * blockDim.x + threadIdx.x);
+	const auto k = i * width * channels + j * channels;
 
 	if (i < height && j < width) {
-		const auto index = GetFrameBufferIndex(i, j, width, channels);
-		const auto r = max_color_value * static_cast<float>(j) / static_cast<float>(width - 1);
-		const auto g = max_color_value * static_cast<float>(i) / static_cast<float>(height - 1);
-		const auto b = max_color_value * .2f;
-		frame_buffer[index] = static_cast<std::uint8_t>(r);
-		frame_buffer[index + 1] = static_cast<std::uint8_t>(g);
-		frame_buffer[index + 2] = static_cast<std::uint8_t>(b);
+		const auto u = static_cast<float>(j) / static_cast<float>(width - 1);
+		const auto v = static_cast<float>(i) / static_cast<float>(height - 1);
+		const auto ray = camera.RayThrough(u, v);
+		const auto color = static_cast<float>(max_color_value) * ComputeRayColor(ray);
+		frame_buffer[k] = static_cast<std::uint8_t>(color.r);
+		frame_buffer[k + 1] = static_cast<std::uint8_t>(color.g);
+		frame_buffer[k + 2] = static_cast<std::uint8_t>( color.b);
 	}
 }
 
 int main() {
 
 	try {
-		constexpr auto kImageWidth = 256;
-		constexpr auto kImageHeight = 256;
-		constexpr auto kColorChannels = 3;
-		constexpr auto kMaxColorValue = std::numeric_limits<std::uint8_t>::max();
-		constexpr auto kPixelCount = kImageWidth * kImageHeight;
-		auto image = rt::Image<kColorChannels>{kImageWidth, kImageHeight};
+		constexpr auto kAspectRatio = 16.f / 9.f;
+		const rt::Camera camera{glm::vec3{0.f}, kAspectRatio};
 
-		std::uint8_t* frame_buffer;
-		constexpr auto kFrameBufferSize = static_cast<size_t>(kColorChannels * kPixelCount) * sizeof(std::uint8_t);
-		CHECK_CUDA_ERRORS(cudaMallocManaged(reinterpret_cast<void**>(&frame_buffer), kFrameBufferSize));
+		constexpr auto kImageHeight = 400;
+		constexpr auto kImageWidth = static_cast<int>(kAspectRatio * kImageHeight);
+		constexpr auto kColorChannels = 3;
+		constexpr auto kImageSize = static_cast<std::int64_t>(kImageWidth) * kImageHeight * kColorChannels;
+		constexpr auto kImageSizeBytes = kImageSize * sizeof(std::uint8_t);
+		constexpr auto kMaxColorValue = std::numeric_limits<std::uint8_t>::max();
+		const rt::Image image{kImageWidth, kImageHeight, kColorChannels, kMaxColorValue};
+
+		std::uint8_t* device_frame_buffer = nullptr;
+		CHECK_CUDA_ERRORS(cudaMallocManaged(reinterpret_cast<void**>(&device_frame_buffer), kImageSizeBytes));
 
 		const dim3 threads{16, 16};
 		const dim3 blocks{kImageWidth / threads.x + 1, kImageHeight / threads.y + 1};
-		Render<<<blocks, threads>>>(frame_buffer, kImageWidth, kImageHeight, kColorChannels, kMaxColorValue);
+		Render<<<blocks, threads>>>(image, camera, device_frame_buffer);
 
 		CHECK_CUDA_ERRORS(cudaGetLastError());
 		CHECK_CUDA_ERRORS(cudaDeviceSynchronize());
 
-		for (auto i = 0; i < kImageHeight; ++i) {
-			for (auto j = 0; j < kImageWidth; ++j) {
-				const auto index = GetFrameBufferIndex(i, j, kImageWidth, kColorChannels);
-				const auto r = frame_buffer[index];
-				const auto g = frame_buffer[index + 1];
-				const auto b = frame_buffer[index + 2];
-				image(i, j) = {r, g, b};
-			}
-		}
+		const std::unique_ptr<std::uint8_t[]> host_frame_buffer{new std::uint8_t[kImageSize]};
+		CHECK_CUDA_ERRORS(cudaMemcpy(host_frame_buffer.get(), device_frame_buffer, kImageSizeBytes, cudaMemcpyDefault));
+		CHECK_CUDA_ERRORS(cudaFree(device_frame_buffer));
 
-		image.SaveAs("img/ch2.png");
-		CHECK_CUDA_ERRORS(cudaFree(frame_buffer));
+		image.SaveAs(host_frame_buffer.get(), "img/ch4.png");
 		return EXIT_SUCCESS;
+
 	} catch (std::exception& e) {
 		std::cerr << e.what();
 		cudaDeviceReset();

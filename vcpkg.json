@@ -1,5 +1,9 @@
 {
   "name": "cuda-ray-tracing",
   "version-string": "1.0.0",
-  "dependencies": ["glm", "stb"]
+  "dependencies": [
+    "glm",
+    "fmt",
+    "stb"
+  ]
 }

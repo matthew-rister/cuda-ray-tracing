@@ -1,42 +1,29 @@
 #pragma once
 
 #include <cstdint>
-#include <sstream>
 #include <stdexcept>
 #include <string_view>
-#include <vector>
 
-#include <glm/vec3.hpp>
-
-#pragma warning(disable:4996)
-#include "stb_image_write.h"
-#pragma warning(default:4996)
+#include <stb_image_write.h>
+#include <fmt/core.h>
 
 namespace rt {
 
-template <int Channels>
-class Image {
+struct Image {
 
-public:
-	Image(const int width, const int height) noexcept
-		: width_{width}, height_{height}, pixels_{decltype(pixels_)(static_cast<std::size_t>(width) * height)} {}
+	Image(const int width, const int height, const int channels, const int max_color_value) noexcept
+		: width{width},
+		  height{height},
+		  channels{channels},
+		  max_color_value{max_color_value} {}
 
-	[[nodiscard]] int width() const noexcept { return width_; }
-	[[nodiscard]] int height() const noexcept { return height_; }
-
-	glm::vec<Channels, std::uint8_t>& operator()(const int i, const int j) { return pixels_.at(i * width_ + j); }
-
-	void SaveAs(const std::string_view filename) const {
+	void SaveAs(const std::uint8_t* const frame_buffer, const std::string_view filename) const {
 		stbi_flip_vertically_on_write(true);
-		if (!stbi_write_png(filename.data(), width_, height_, Channels, pixels_.data(), width_ * Channels)) {
-			std::ostringstream oss;
-			oss << "Failed to save " << filename;
-			throw std::runtime_error{oss.str()};
+		if (!stbi_write_png(filename.data(), width, height, channels, frame_buffer, width * channels)) {
+			throw std::runtime_error{fmt::format("An error occurred while attempting to save {}", filename)};
 		}
 	}
 
-private:
-	int width_, height_;
-	std::vector<glm::vec<Channels, std::uint8_t>> pixels_;
+	int width, height, channels, max_color_value;
 };
 }

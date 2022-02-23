@@ -12,12 +12,21 @@
     <ClInclude Include="rt\image.h">
       <Filter>rt</Filter>
     </ClInclude>
+    <ClInclude Include="rt\ray.h">
+      <Filter>rt</Filter>
+    </ClInclude>
+    <ClInclude Include="rt\camera.h">
+      <Filter>rt</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="main.cu" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="img\ch2.png">
+      <Filter>img</Filter>
+    </Image>
+    <Image Include="img\ch4.png">
       <Filter>img</Filter>
     </Image>
   </ItemGroup>
