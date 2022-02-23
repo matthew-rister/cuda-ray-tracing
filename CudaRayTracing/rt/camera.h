@@ -10,7 +10,7 @@ namespace rt {
 class Camera {
 
 public:
-	Camera(const glm::vec3& origin, const float aspect_ratio)
+	Camera(const glm::vec3& origin, const float aspect_ratio) noexcept
 		: origin_{origin},
 		  horizontal_{aspect_ratio * kViewportHeight, 0.f, 0.f},
 		  vertical_{0.f, kViewportHeight, 0.f},
