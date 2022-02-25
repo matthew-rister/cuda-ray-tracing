@@ -1,8 +1,7 @@
 #pragma once
 
 #include <cuda_runtime.h>
-#include <glm/vec3.hpp>
-#include <glm/gtx/normal.hpp>
+#include <glm/glm.hpp>
 
 namespace rt {
 
@@ -20,4 +19,5 @@ public:
 private:
 	glm::vec3 origin_, direction_;
 };
-}
+
+} // namespace rt

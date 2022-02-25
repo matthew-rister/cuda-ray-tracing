@@ -1,58 +1,61 @@
-﻿#include <cstdint>
-#include <cstdlib>
-#include <cstring>
+﻿#include <array>
+#include <cmath>
+#include <cstdint>
 #include <iostream>
 #include <memory>
-#include <string_view>
+#include <vector>
 
 #include <cuda_runtime.h>
 #include <device_launch_parameters.h>
-#include <fmt/core.h>
 #include <glm/glm.hpp>
 
-#include "rt/camera.h"
-#include "rt/image.h"
-#include "rt/ray.h"
-#include "rt/sphere.h"
+#include "cuda_error_check.cuh"
+#include "rt/camera.cuh"
+#include "rt/image.cuh"
+#include "rt/intersection.cuh"
+#include "rt/ray.cuh"
+#include "rt/scene.cuh"
+#include "rt/sphere.cuh"
 
-using namespace fmt;
 using namespace glm;
 using namespace rt;
 using namespace std;
 
-#define __FILENAME__ (strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__)
-#define CHECK_CUDA_ERRORS(status) CheckCudaErrors((status), #status, __FILENAME__, __LINE__)
+__device__ vec3 ComputeRayColor(const Ray& ray, const Scene& scene) noexcept {
+	Intersection closest_intersection;
+	auto hit = false;
+	auto t_max = INFINITY;
 
-void CheckCudaErrors(
-	const cudaError_t status, const std::string_view function, const std::string_view filename, const int line_number) {
-
-	if (status != cudaSuccess) {
-		throw runtime_error{
-			format("{} failed at {}:{} with error \"{}\"", function, filename, line_number, cudaGetErrorString(status))
-		};
+	for (const auto& object : scene) {
+		if (Intersection intersection; object.Intersect(ray, 0.f, t_max, intersection)) {
+			closest_intersection = intersection;
+			hit = true;
+			t_max = intersection.t;
+		}
 	}
-}
 
-__device__ vec3 ComputeRayColor(const Ray& ray, const Sphere& sphere) noexcept {
-	if (sphere.Intersect(ray)) return vec3{1.f, 0.f, 0.f};
+	if (hit) {
+		const auto& [point, normal, t, front_facing] = closest_intersection;
+		return .5f * normal + vec3{.5f};
+	}
+
 	const auto t = .5f * (ray.direction().y + 1.f);
 	return (1.f - t) * vec3{1.f} + t * vec3{.5f, .7f, 1.f};
 }
 
-__global__ void Render(const Image image, const Camera camera, const Sphere sphere, uint8_t* const frame_buffer) {
-	const auto [width, height, channels, max_color_value] = image;
+__global__ void Render(const Camera& camera, const Image& image, const Scene& scene) {
 	const auto i = static_cast<int>(blockIdx.y * blockDim.y + threadIdx.y);
 	const auto j = static_cast<int>(blockIdx.x * blockDim.x + threadIdx.x);
-	const auto k = i * width * channels + j * channels;
+	const auto k = i * image.width() * image.channels() + j * image.channels();
 
-	if (i < height && j < width) {
-		const auto u = static_cast<float>(j) / static_cast<float>(width - 1);
-		const auto v = static_cast<float>(i) / static_cast<float>(height - 1);
+	if (i < image.height() && j < image.width()) {
+		const auto u = static_cast<float>(j) / static_cast<float>(image.width() - 1);
+		const auto v = static_cast<float>(i) / static_cast<float>(image.height() - 1);
 		const auto ray = camera.RayThrough(u, v);
-		const auto color = static_cast<float>(max_color_value) * ComputeRayColor(ray, sphere);
-		frame_buffer[k] = static_cast<uint8_t>(color.r);
-		frame_buffer[k + 1] = static_cast<uint8_t>(color.g);
-		frame_buffer[k + 2] = static_cast<uint8_t>( color.b);
+		const auto color = static_cast<float>(image.max_color_value()) * ComputeRayColor(ray, scene);
+		image[k] = static_cast<uint8_t>(color.r);
+		image[k + 1] = static_cast<uint8_t>(color.g);
+		image[k + 2] = static_cast<uint8_t>(color.b);
 	}
 }
 
@@ -60,33 +63,27 @@ int main() {
 
 	try {
 		constexpr auto kAspectRatio = 16.f / 9.f;
-		const Camera camera{vec3{0.f}, kAspectRatio};
+		const auto camera = Camera::Make(vec3{0.f}, kAspectRatio);
 
 		constexpr auto kImageHeight = 400;
 		constexpr auto kImageWidth = static_cast<int>(kAspectRatio * kImageHeight);
 		constexpr auto kColorChannels = 3;
-		constexpr auto kImageSize = static_cast<int64_t>(kImageWidth) * kImageHeight * kColorChannels;
-		constexpr auto kImageSizeBytes = kImageSize * sizeof(uint8_t);
 		constexpr auto kMaxColorValue = numeric_limits<uint8_t>::max();
-		const Image image{kImageWidth, kImageHeight, kColorChannels, kMaxColorValue};
-		uint8_t* device_frame_buffer = nullptr;
-		CHECK_CUDA_ERRORS(cudaMallocManaged(reinterpret_cast<void**>(&device_frame_buffer), kImageSizeBytes));
+		const auto image = Image::Make(kImageWidth, kImageHeight, kColorChannels, kMaxColorValue);
 
-		const glm::vec3 origin{0.f, 0.f, -1.f};
-		const Sphere sphere{origin, .5f};
+		const auto scene = Scene::Make(vector{
+			Sphere{vec3{0.f, 0.f, -1.f}, .5f},
+			Sphere{vec3{0.f, -100.5f, -1.f}, 100.f}
+		});
 
 		const dim3 threads{16, 16};
 		const dim3 blocks{kImageWidth / threads.x + 1, kImageHeight / threads.y + 1};
-		Render<<<blocks, threads>>>(image, camera, sphere, device_frame_buffer);
+		Render<<<blocks, threads>>>(*camera, *image, *scene);
 
 		CHECK_CUDA_ERRORS(cudaGetLastError());
 		CHECK_CUDA_ERRORS(cudaDeviceSynchronize());
 
-		const unique_ptr<uint8_t[]> host_frame_buffer{new uint8_t[kImageSize]};
-		CHECK_CUDA_ERRORS(cudaMemcpy(host_frame_buffer.get(), device_frame_buffer, kImageSizeBytes, cudaMemcpyDefault));
-		CHECK_CUDA_ERRORS(cudaFree(device_frame_buffer));
-
-		image.SaveAs(host_frame_buffer.get(), "img/ch5.png");
+		image->SaveAs("img/ch6.png");
 		return EXIT_SUCCESS;
 
 	} catch (exception& e) {

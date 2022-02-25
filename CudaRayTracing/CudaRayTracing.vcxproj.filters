@@ -9,16 +9,24 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="rt\image.h">
+    <ClInclude Include="rt\image.cuh">
       <Filter>rt</Filter>
     </ClInclude>
-    <ClInclude Include="rt\ray.h">
+    <ClInclude Include="rt\ray.cuh">
       <Filter>rt</Filter>
     </ClInclude>
-    <ClInclude Include="rt\camera.h">
+    <ClInclude Include="rt\camera.cuh">
       <Filter>rt</Filter>
     </ClInclude>
-    <ClInclude Include="rt\sphere.h">
+    <ClInclude Include="rt\sphere.cuh">
+      <Filter>rt</Filter>
+    </ClInclude>
+    <ClInclude Include="rt\intersection.cuh">
+      <Filter>rt</Filter>
+    </ClInclude>
+    <ClInclude Include="cuda_error_check.cuh" />
+    <ClInclude Include="cuda_managed.cuh" />
+    <ClInclude Include="rt\scene.cuh">
       <Filter>rt</Filter>
     </ClInclude>
   </ItemGroup>
@@ -32,6 +40,11 @@
     <Image Include="img\ch4.png">
       <Filter>img</Filter>
     </Image>
-    <Image Include="img\ch5.png" />
+    <Image Include="img\ch5.png">
+      <Filter>img</Filter>
+    </Image>
+    <Image Include="img\ch6.png">
+      <Filter>img</Filter>
+    </Image>
   </ItemGroup>
 </Project>

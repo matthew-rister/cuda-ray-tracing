@@ -3,14 +3,15 @@
 #include <cuda_runtime.h>
 #include <glm/vec3.hpp>
 
-#include "rt/ray.h"
+#include "cuda_managed.cuh"
+#include "rt/ray.cuh"
 
 namespace rt {
 
-class Camera {
+class Camera final : public CudaManaged<Camera> {
 
 public:
-	Camera(const glm::vec3& origin, const float aspect_ratio) noexcept
+	__host__ Camera(const glm::vec3& origin, const float aspect_ratio) noexcept
 		: origin_{origin},
 		  horizontal_{aspect_ratio * kViewportHeight, 0.f, 0.f},
 		  vertical_{0.f, kViewportHeight, 0.f},
@@ -26,4 +27,5 @@ private:
 	static constexpr float kFocalLength = 1.f;
 	glm::vec3 origin_, horizontal_, vertical_, focal_, lower_left_corner_;
 };
-}
+
+} // namespace rt
