@@ -14,15 +14,20 @@
     <CudaCompile Include="main.cu" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="rt\camera.h" />
-    <ClInclude Include="rt\ray.h" />
-    <ClInclude Include="rt\image.h" />
-    <ClInclude Include="rt\sphere.h" />
+    <ClInclude Include="cuda_error_check.cuh" />
+    <ClInclude Include="cuda_managed.cuh" />
+    <ClInclude Include="rt\camera.cuh" />
+    <ClInclude Include="rt\intersection.cuh" />
+    <ClInclude Include="rt\ray.cuh" />
+    <ClInclude Include="rt\image.cuh" />
+    <ClInclude Include="rt\scene.cuh" />
+    <ClInclude Include="rt\sphere.cuh" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="img\ch2.png" />
     <Image Include="img\ch4.png" />
     <Image Include="img\ch5.png" />
+    <Image Include="img\ch6.png" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{EC098A88-B4A7-4592-BD8F-B8053FA17934}</ProjectGuid>
@@ -69,7 +74,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;WIN64;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
@@ -87,6 +92,7 @@
       <Optimization>Od</Optimization>
       <RuntimeChecks>RTC1</RuntimeChecks>
       <TypeInfo>true</TypeInfo>
+      <CodeGeneration>compute_80,sm_80</CodeGeneration>
     </CudaCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -96,7 +102,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;WIN64;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
@@ -108,14 +114,16 @@
     </Link>
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
-      <Include>
-      </Include>
-      <Defines>STB_IMAGE_WRITE_IMPLEMENTATION;GLM_FORCE_SILENT_WARNINGS</Defines>
+      <Include>$(ProjectDir)</Include>
+      <Defines>NDEBUG;STB_IMAGE_WRITE_IMPLEMENTATION;GLM_FORCE_SILENT_WARNINGS</Defines>
       <AdditionalOptions>-std=c++17 -Xcompiler "/std:c++17"  -Xcudafe --diag_suppress=20012 %(AdditionalOptions)</AdditionalOptions>
       <Optimization>O2</Optimization>
       <Warning>W4</Warning>
-      <RuntimeChecks>Default</RuntimeChecks>
+      <RuntimeChecks>InheritFromHost</RuntimeChecks>
       <TypeInfo>false</TypeInfo>
+      <CodeGeneration>compute_80,sm_80</CodeGeneration>
+      <HostDebugInfo>false</HostDebugInfo>
+      <DebugInformationFormat>None</DebugInformationFormat>
     </CudaCompile>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
