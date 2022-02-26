@@ -1,37 +1,41 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="rt">
-      <UniqueIdentifier>{f10d9dbf-ac9e-4819-b38b-3258bad5b7a9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="img">
       <UniqueIdentifier>{fcf40063-947d-4170-b7bf-5388f41e4add}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{d2431ff2-604f-46c9-8fba-f6de0148780f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\rt">
+      <UniqueIdentifier>{f10d9dbf-ac9e-4819-b38b-3258bad5b7a9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="rt\image.cuh">
-      <Filter>rt</Filter>
+    <ClInclude Include="src\rt\image.cuh">
+      <Filter>src\rt</Filter>
     </ClInclude>
-    <ClInclude Include="rt\ray.cuh">
-      <Filter>rt</Filter>
+    <ClInclude Include="src\rt\ray.cuh">
+      <Filter>src\rt</Filter>
     </ClInclude>
-    <ClInclude Include="rt\camera.cuh">
-      <Filter>rt</Filter>
+    <ClInclude Include="src\rt\camera.cuh">
+      <Filter>src\rt</Filter>
     </ClInclude>
-    <ClInclude Include="rt\sphere.cuh">
-      <Filter>rt</Filter>
+    <ClInclude Include="src\rt\sphere.cuh">
+      <Filter>src\rt</Filter>
     </ClInclude>
-    <ClInclude Include="rt\intersection.cuh">
-      <Filter>rt</Filter>
+    <ClInclude Include="src\rt\intersection.cuh">
+      <Filter>src\rt</Filter>
     </ClInclude>
-    <ClInclude Include="cuda_error_check.cuh" />
-    <ClInclude Include="cuda_managed.cuh" />
-    <ClInclude Include="rt\scene.cuh">
-      <Filter>rt</Filter>
+    <ClInclude Include="src\rt\scene.cuh">
+      <Filter>src\rt</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <CudaCompile Include="main.cu" />
+    <ClInclude Include="src\cuda_error_check.cuh">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cuda_managed.cuh">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="img\ch2.png">
@@ -46,5 +50,13 @@
     <Image Include="img\ch6.png">
       <Filter>img</Filter>
     </Image>
+    <Image Include="img\ch7.png">
+      <Filter>img</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="src\main.cu">
+      <Filter>src</Filter>
+    </CudaCompile>
   </ItemGroup>
 </Project>

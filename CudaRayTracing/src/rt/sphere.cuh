@@ -2,7 +2,7 @@
 
 #include <cmath>
 
-#include <cuda_runtime.h>
+#include <cuda_runtime_api.h>
 #include <glm/vec3.hpp>
 
 #include "rt/intersection.cuh"
@@ -13,7 +13,7 @@ namespace rt {
 class Sphere {
 
 public:
-	__host__ __device__ Sphere(const glm::vec3& center, const float radius) noexcept
+	__host__ Sphere(const glm::vec3& center, const float radius) noexcept
 		: center_{center}, radius_{radius} {}
 
 	__device__ bool Intersect(

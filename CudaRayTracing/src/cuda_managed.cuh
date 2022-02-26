@@ -11,7 +11,7 @@ class CudaManaged {
 
 public:
 	template <typename ...Args>
-	__host__ static std::unique_ptr<T> Make(Args&&... args) {
+	__host__ static std::unique_ptr<T> MakeCudaManaged(Args&&... args) {
 		return std::make_unique<T>(args...);
 	}
 

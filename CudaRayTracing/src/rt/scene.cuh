@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <vector>
 
-#include <cuda_runtime.h>
+#include <cuda_runtime_api.h>
 
 #include "cuda_error_check.cuh"
 #include "cuda_managed.cuh"

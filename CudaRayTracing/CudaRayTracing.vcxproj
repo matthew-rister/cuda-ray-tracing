@@ -11,23 +11,24 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <CudaCompile Include="main.cu" />
+    <CudaCompile Include="src\main.cu" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="cuda_error_check.cuh" />
-    <ClInclude Include="cuda_managed.cuh" />
-    <ClInclude Include="rt\camera.cuh" />
-    <ClInclude Include="rt\intersection.cuh" />
-    <ClInclude Include="rt\ray.cuh" />
-    <ClInclude Include="rt\image.cuh" />
-    <ClInclude Include="rt\scene.cuh" />
-    <ClInclude Include="rt\sphere.cuh" />
+    <ClInclude Include="src\cuda_error_check.cuh" />
+    <ClInclude Include="src\cuda_managed.cuh" />
+    <ClInclude Include="src\rt\camera.cuh" />
+    <ClInclude Include="src\rt\intersection.cuh" />
+    <ClInclude Include="src\rt\ray.cuh" />
+    <ClInclude Include="src\rt\image.cuh" />
+    <ClInclude Include="src\rt\scene.cuh" />
+    <ClInclude Include="src\rt\sphere.cuh" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="img\ch2.png" />
     <Image Include="img\ch4.png" />
     <Image Include="img\ch5.png" />
     <Image Include="img\ch6.png" />
+    <Image Include="img\ch7.png" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{EC098A88-B4A7-4592-BD8F-B8053FA17934}</ProjectGuid>
@@ -84,7 +85,7 @@
     </Link>
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
-      <Include>$(ProjectDir)</Include>
+      <Include>$(ProjectDir)src</Include>
       <Defines>STB_IMAGE_WRITE_IMPLEMENTATION;GLM_FORCE_SILENT_WARNINGS</Defines>
       <AdditionalOptions>-std=c++17 -Xcompiler "/std:c++17"  -Xcudafe --diag_suppress=20012 %(AdditionalOptions)</AdditionalOptions>
       <Warning>W4</Warning>
@@ -114,7 +115,7 @@
     </Link>
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
-      <Include>$(ProjectDir)</Include>
+      <Include>$(ProjectDir)src</Include>
       <Defines>NDEBUG;STB_IMAGE_WRITE_IMPLEMENTATION;GLM_FORCE_SILENT_WARNINGS</Defines>
       <AdditionalOptions>-std=c++17 -Xcompiler "/std:c++17"  -Xcudafe --diag_suppress=20012 %(AdditionalOptions)</AdditionalOptions>
       <Optimization>O2</Optimization>

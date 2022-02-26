@@ -1,11 +1,12 @@
 #pragma once
 
 #include <cstdint>
+#include <limits>
 #include <sstream>
 #include <stdexcept>
 #include <string_view>
 
-#include <cuda_runtime.h>
+#include <cuda_runtime_api.h>
 #include <stb_image_write.h>
 
 #include "cuda_error_check.cuh"
@@ -16,9 +17,12 @@ namespace rt {
 class Image final : public CudaManaged<Image> {
 
 public:
-	__host__ Image(const int width, const int height, const int channels, const int max_color_value) noexcept
-		: width_{width}, height_{height}, channels_{channels}, max_color_value_{max_color_value} {
-		const auto size = sizeof(uint8_t) * width_ * height_ * channels_;
+	using color_t = std::uint8_t;
+	using pixel_t = glm::vec<3, color_t>;
+	static constexpr int kMaxColorValue = std::numeric_limits<color_t>::max();
+
+	__host__ Image(const int width, const int height) noexcept : width_{width}, height_{height} {
+		const auto size = sizeof(pixel_t) * width_ * height_;
 		CHECK_CUDA_ERRORS(cudaMallocManaged(reinterpret_cast<void**>(&frame_buffer_), size));
 	}
 
@@ -27,9 +31,10 @@ public:
 	__device__ [[nodiscard]] int width() const noexcept { return width_; }
 	__device__ [[nodiscard]] int height() const noexcept { return height_; }
 	__device__ [[nodiscard]] int channels() const noexcept { return channels_; }
-	__device__ [[nodiscard]] int max_color_value() const noexcept { return max_color_value_; }
 
-	__device__ uint8_t& operator[](const int i) const noexcept { return frame_buffer_[i]; }
+	__device__ pixel_t& operator()(const int i, const int j) const noexcept {
+		return frame_buffer_[i * width_ + j];
+	}
 
 	__host__ void SaveAs(const std::string_view filename) const {
 		stbi_flip_vertically_on_write(true);
@@ -42,8 +47,8 @@ public:
 	}
 
 private:
-	int width_, height_, channels_, max_color_value_;
-	std::uint8_t* frame_buffer_{};
+	int width_, height_, channels_ = pixel_t::length();
+	pixel_t* frame_buffer_{};
 };
 
 } // namespace rt
