@@ -31,6 +31,7 @@
     <Image Include="img\ch6.png" />
     <Image Include="img\ch7.png" />
     <Image Include="img\ch8.png" />
+    <Image Include="img\ch9.png" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{EC098A88-B4A7-4592-BD8F-B8053FA17934}</ProjectGuid>

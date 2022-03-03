@@ -7,6 +7,7 @@
 #include <glm/glm.hpp>
 
 #include "cuda_error_check.cuh"
+#include "cuda_managed.cuh"
 #include "rt/camera.cuh"
 #include "rt/image.cuh"
 #include "rt/intersection.cuh"
@@ -90,7 +91,7 @@ int main() {
 		CHECK_CUDA_ERRORS(cudaGetLastError());
 		CHECK_CUDA_ERRORS(cudaDeviceSynchronize());
 
-		image->SaveAs("img/ch8.png");
+		image->SaveAs("img/ch9.png");
 
 	} catch (std::exception& e) {
 		std::cerr << e.what();
