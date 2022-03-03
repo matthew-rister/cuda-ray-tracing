@@ -27,15 +27,17 @@
     <ClInclude Include="src\rt\intersection.cuh">
       <Filter>src\rt</Filter>
     </ClInclude>
-    <ClInclude Include="src\rt\scene.cuh">
-      <Filter>src\rt</Filter>
-    </ClInclude>
     <ClInclude Include="src\cuda_error_check.cuh">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\cuda_managed.cuh">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="src\rt\material.cuh" />
+    <ClInclude Include="src\rt\material.cuh">
+      <Filter>src\rt</Filter>
+    </ClInclude>
+    <ClInclude Include="src\rt\scene.cuh" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="img\ch2.png">
@@ -51,6 +53,9 @@
       <Filter>img</Filter>
     </Image>
     <Image Include="img\ch7.png">
+      <Filter>img</Filter>
+    </Image>
+    <Image Include="img\ch8.png">
       <Filter>img</Filter>
     </Image>
   </ItemGroup>

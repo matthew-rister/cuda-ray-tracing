@@ -1,45 +1,47 @@
 #pragma once
 
-#include <algorithm>
-#include <vector>
-
 #include <cuda_runtime_api.h>
+#include <device_launch_parameters.h>
 
 #include "cuda_error_check.cuh"
 #include "cuda_managed.cuh"
+#include "rt/intersection.cuh"
+#include "rt/material.cuh"
 #include "rt/sphere.cuh"
 
 namespace rt {
 
-class Scene final : public CudaManaged<Scene> {
+__global__ void CreateSceneObjects(Intersectable*** objects, int* size) {
+	if (blockIdx.x == 0 && threadIdx.x == 0) {
+		*objects = new Intersectable*[*size = 2]{
+			new Sphere{glm::vec3{0.f, 0.f, -1.f}, .5f, new Lambertian{glm::vec3{.5f}}},
+			new Sphere{glm::vec3{0.f, -100.5f, -1.f}, 100.f, new Lambertian{glm::vec3{.5f}}}
+		};
+	}
+}
 
-	struct SceneIterator {
+__global__ void DeleteSceneObjects(Intersectable*** objects) {
+	if (blockIdx.x == 0 && threadIdx.x == 0) {
+		delete[] *objects;
+	}
+}
 
-		__device__ SceneIterator(const Sphere* objects, const int size, const int index)
-			: objects{objects}, size{size}, index{index} {}
+struct Scene : CudaManaged<Scene> {
 
-		__device__ const Sphere& operator*() const noexcept { return objects[index]; }
-		__device__ void operator++() noexcept { ++index; }
-		__device__ bool operator!=(const SceneIterator& rhs) const noexcept { return index != rhs.index; }
-
-		const Sphere* objects;
-		int size, index;
-	};
-
-public:
-	__host__ explicit Scene(const std::vector<Sphere>& objects) : size_{static_cast<int>(objects.size())} {
-		CHECK_CUDA_ERRORS(cudaMallocManaged(reinterpret_cast<void**>(&objects_), sizeof(Sphere) * size_));
-		std::copy(objects.begin(), objects.end(), objects_);
+	Scene() {
+		CreateSceneObjects<<<1, 1>>>(&objects, &size);
+		CHECK_CUDA_ERRORS(cudaGetLastError());
+		CHECK_CUDA_ERRORS(cudaDeviceSynchronize());
 	}
 
-	__host__ ~Scene() { CHECK_CUDA_ERRORS_NOTHROW(cudaFree(objects_)); }
+	~Scene() {
+		DeleteSceneObjects<<<1, 1>>>(&objects);
+		CHECK_CUDA_ERRORS_NOTHROW(cudaGetLastError());
+		CHECK_CUDA_ERRORS_NOTHROW(cudaDeviceSynchronize());
+	}
 
-	__device__ [[nodiscard]] SceneIterator begin() const noexcept { return SceneIterator{objects_, size_, 0}; }
-	__device__ [[nodiscard]] SceneIterator end() const noexcept { return SceneIterator{objects_, size_, size_}; }
-
-private:
-	Sphere* objects_{};
-	int size_;
+	Intersectable** objects{};
+	int size{};
 };
 
-} // namespace rt
+}
