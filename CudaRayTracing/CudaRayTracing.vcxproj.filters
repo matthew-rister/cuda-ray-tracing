@@ -68,6 +68,7 @@
     <Image Include="img\ch10.png">
       <Filter>img</Filter>
     </Image>
+    <Image Include="img\ch11.png" />
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="src\main.cu">

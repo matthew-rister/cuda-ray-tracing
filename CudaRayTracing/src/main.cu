@@ -73,7 +73,10 @@ int main() {
 
 	try {
 		constexpr auto kAspectRatio = 16.f / 9.f;
-		const auto camera = Camera::MakeCudaManaged(glm::vec3{0.f}, kAspectRatio);
+		constexpr auto kFieldOfViewY = 20.f;
+		const glm::vec3 look_from{-2.f, 2.f, 1.f};
+		const glm::vec3 look_at{0.f, 0.f, -1.f};
+		const auto camera = Camera::MakeCudaManaged(look_from, look_at, kAspectRatio, kFieldOfViewY);
 
 		constexpr auto kImageHeight = 400;
 		constexpr auto kImageWidth = static_cast<int>(kAspectRatio * kImageHeight);
@@ -89,7 +92,7 @@ int main() {
 		CHECK_CUDA_ERRORS(cudaGetLastError());
 		CHECK_CUDA_ERRORS(cudaDeviceSynchronize());
 
-		image->SaveAs("img/ch10.png");
+		image->SaveAs("img/ch11.png");
 
 	} catch (std::exception& e) {
 		std::cerr << e.what();
