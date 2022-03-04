@@ -25,6 +25,7 @@
     <ClInclude Include="src\rt\sphere.cuh" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="img\ch10.png" />
     <Image Include="img\ch2.png" />
     <Image Include="img\ch4.png" />
     <Image Include="img\ch5.png" />

@@ -33,9 +33,7 @@ __device__ glm::vec3 TracePath(Ray ray, const Scene& scene, const int max_depth,
 		}
 
 		if (closest_intersection.hit) {
-			const auto& point = closest_intersection.point;
-			const auto& normal = closest_intersection.normal;
-			ray = closest_intersection.material->Scatter(ray, point, normal, random_state);
+			ray = closest_intersection.material->Scatter(ray, closest_intersection, random_state);
 		} else {
 			const auto t = .5f * (ray.direction().y + 1.f);
 			return ray.color() * glm::mix(glm::vec3{1.f}, glm::vec3{.5f, .7f, 1.f}, t);
@@ -91,7 +89,7 @@ int main() {
 		CHECK_CUDA_ERRORS(cudaGetLastError());
 		CHECK_CUDA_ERRORS(cudaDeviceSynchronize());
 
-		image->SaveAs("img/ch9.png");
+		image->SaveAs("img/ch10.png");
 
 	} catch (std::exception& e) {
 		std::cerr << e.what();
