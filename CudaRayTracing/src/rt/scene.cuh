@@ -15,7 +15,7 @@ __global__ void CreateSceneObjects(Intersectable*** objects, int* size) {
 	if (blockIdx.x == 0 && threadIdx.x == 0) {
 		*objects = new Intersectable*[*size = 5]{
 			new Sphere{glm::vec3{ 0.f, -100.5f, -1.f}, 100.f, new Lambertian{glm::vec3{.8f, .8f, 0.f}}},
-			new Sphere{glm::vec3{ 0.f,     0.f, -1.f},   .5f, new Lambertian{glm::vec3{.7f, .3f, .3f}}},
+			new Sphere{glm::vec3{ 0.f,     0.f, -1.f},   .5f, new Lambertian{glm::vec3{.1f, .2f, .5f}}},
 			new Sphere{glm::vec3{-1.f,     0.f, -1.f},   .5f, new Dielectric{1.5f}},
 			new Sphere{glm::vec3{-1.f,     0.f, -1.f},  -.4f, new Dielectric{1.5f}},
 			new Sphere{glm::vec3{ 1.f,     0.f, -1.f},   .5f, new Metal{glm::vec3{.8f, .6f, .2f}}}
