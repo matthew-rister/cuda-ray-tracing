@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cuda_runtime_api.h>
-#include <glm/vec3.hpp>
+#include <glm/glm.hpp>
 
 namespace rt {
 class Material;

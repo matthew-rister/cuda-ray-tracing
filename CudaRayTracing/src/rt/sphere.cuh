@@ -3,7 +3,7 @@
 #include <cmath>
 
 #include <cuda_runtime_api.h>
-#include <glm/vec3.hpp>
+#include <glm/glm.hpp>
 
 #include "rt/intersection.cuh"
 #include "rt/material.cuh"

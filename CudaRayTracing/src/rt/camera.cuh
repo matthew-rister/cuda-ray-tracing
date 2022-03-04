@@ -1,31 +1,62 @@
 #pragma once
 
 #include <cuda_runtime_api.h>
-#include <glm/vec3.hpp>
+#include <curand_kernel.h>
+#include <glm/glm.hpp>
 
-#include "cuda_managed.cuh"
 #include "rt/ray.cuh"
 
 namespace rt {
 
-class Camera final : public CudaManaged<Camera> {
+class Camera final {
 
 public:
-	Camera(const glm::vec3& origin, const float aspect_ratio) noexcept
-		: origin_{origin},
-		  viewport_width_{aspect_ratio * kViewportHeight},
-		  lower_left_corner_{origin - glm::vec3{viewport_width_ / 2.f, kViewportHeight / 2.f, kFocalLength}} {}
+	__device__ Camera(
+		const glm::vec3& look_from,
+		const glm::vec3& look_at,
+		const float aspect_ratio,
+		const float field_of_view_y,
+		const float aperture = 0.f)
+		: origin_{look_from},
+		  radius_{aperture / 2.f} {
 
-	__device__ [[nodiscard]] Ray RayThrough(const float u, const float v) const {
-		return Ray{origin_, lower_left_corner_ + glm::vec3{u * viewport_width_, v * kViewportHeight, 0.f}};
+		const auto theta = glm::radians(field_of_view_y);
+		const auto viewport_height = 2.f * std::tan(theta / 2.f);
+		const auto viewport_width = aspect_ratio * viewport_height;
+
+		constexpr glm::vec3 kWorldUp{0.f, 1.f, 0.f};
+		const auto w = glm::normalize(look_from - look_at);
+		const auto u = glm::normalize(glm::cross(kWorldUp, w));
+		const auto v = glm::normalize(glm::cross(w, u));
+
+		const auto focus_distance = glm::length(look_from - look_at);
+		horizontal_ = focus_distance * viewport_width * u;
+		vertical_ = focus_distance * viewport_height * v;
+		lower_left_corner_ = origin_ - horizontal_ / 2.f - vertical_ / 2.f - focus_distance * w;
+	}
+
+	__device__ [[nodiscard]] Ray RayThrough(const float u, const float v, curandState_t* random_state) const {
+		const auto offset = radius_ * MakeRandomVectorInUnitDisk(random_state);
+		const auto origin = origin_ + offset.x * horizontal_ + offset.y * vertical_;
+		const auto direction = lower_left_corner_ + u * horizontal_ + v * vertical_ - origin;
+		return Ray{origin, direction};
 	}
 
 private:
-	static constexpr float kViewportHeight = 2.f;
-	static constexpr float kFocalLength = 1.f;
+	__device__ [[nodiscard]] static glm::vec2 MakeRandomVectorInUnitDisk(curandState_t* random_state) {
+		glm::vec2 v;
+		do {
+			const auto x = curand_uniform(random_state);
+			const auto y = curand_uniform(random_state);
+			v = 2.f * glm::vec2{x, y} - 1.f;
+		} while (glm::dot(v, v) > 1.f);
+		return v;
+	}
+
 	glm::vec3 origin_;
-	float viewport_width_;
+	glm::vec3 horizontal_, vertical_;
 	glm::vec3 lower_left_corner_;
+	float radius_;
 };
 
 } // namespace rt

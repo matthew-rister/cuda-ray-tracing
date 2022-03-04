@@ -5,7 +5,6 @@
 #include <cuda_runtime_api.h>
 #include <curand_kernel.h>
 #include <glm/glm.hpp>
-#include <glm/gtx/norm.hpp>
 
 #include "rt/intersection.cuh"
 #include "rt/ray.cuh"
@@ -40,7 +39,8 @@ public:
 	__device__ [[nodiscard]] Ray Scatter(
 		const Ray& ray, const Intersection& intersection, curandState_t* random_state) const override {
 		auto reflection_direction = intersection.normal + MakeRandomVectorInUnitSphere(random_state);
-		if (constexpr auto kEpsilon = 1e-9f; glm::length2(reflection_direction) < kEpsilon * kEpsilon) {
+		const auto length_squared = glm::dot(reflection_direction, reflection_direction);
+		if (constexpr auto kEpsilon = 1e-9f; length_squared < kEpsilon * kEpsilon) {
 			reflection_direction = intersection.normal; // handle case where reflected direction is the zero vector
 		}
 		return Ray{intersection.point, reflection_direction, ray.color() * albedo_};

@@ -19,9 +19,9 @@ using namespace rt;
 
 namespace {
 
-__device__ glm::vec3 TracePath(Ray ray, const Scene& scene, const int max_depth, curandState_t* random_state) {
+__device__ glm::vec3 TracePath(const Scene& scene, Ray ray, curandState_t* random_state) {
 
-	for (auto i = 0; i < max_depth; ++i) {
+	for (auto i = 0; i < scene.max_depth; ++i) {
 		Intersection closest_intersection;
 		auto t_max = INFINITY;
 
@@ -43,8 +43,7 @@ __device__ glm::vec3 TracePath(Ray ray, const Scene& scene, const int max_depth,
 	return glm::vec3{0.f};
 }
 
-__global__ void Render(
-	const Image& image, const Camera& camera, const Scene& scene, const int samples_per_pixel, const int max_depth) {
+__global__ void Render(const Scene& scene, const Image& image) {
 	const auto i = static_cast<int>(blockIdx.y * blockDim.y + threadIdx.y);
 	const auto j = static_cast<int>(blockIdx.x * blockDim.x + threadIdx.x);
 
@@ -54,14 +53,14 @@ __global__ void Render(
 		curand_init(0, thread_id, 0, &random_state);
 
 		glm::vec3 accumulated_color{0.f};
-		for (auto k = 0; k < samples_per_pixel; ++k) {
+		for (auto k = 0; k < scene.samples_per_pixel; ++k) {
 			const auto u = (j + curand_uniform(&random_state)) / (image.width() - 1.f);
 			const auto v = (i + curand_uniform(&random_state)) / (image.height() - 1.f);
-			const auto ray = camera.RayThrough(u, v);
-			accumulated_color += TracePath(ray, scene, max_depth, &random_state);
+			const auto ray = scene.camera->RayThrough(u, v, &random_state);
+			accumulated_color += TracePath(scene, ray, &random_state);
 		}
 
-		const auto average_color = accumulated_color / static_cast<float>(samples_per_pixel);
+		const auto average_color = accumulated_color / static_cast<float>(scene.samples_per_pixel);
 		const auto gamma_correction = glm::sqrt(average_color);
 		image(i, j) = static_cast<float>(Image::kMaxColorValue) * gamma_correction;
 	}
@@ -72,24 +71,16 @@ __global__ void Render(
 int main() {
 
 	try {
-		constexpr auto kAspectRatio = 16.f / 9.f;
-		const auto camera = Camera::MakeCudaManaged(glm::vec3{0.f}, kAspectRatio);
-
-		constexpr auto kImageHeight = 400;
-		constexpr auto kImageWidth = static_cast<int>(kAspectRatio * kImageHeight);
-		const auto image = Image::MakeCudaManaged(kImageWidth, kImageHeight);
-
-		constexpr auto kSamplesPerPixel = 100;
-		constexpr auto kMaxDepth = 50;
 		const auto scene = Scene::MakeCudaManaged();
+		const auto image = Image::MakeCudaManaged(scene->image_width, scene->image_height);
 
 		const dim3 threads{16, 16};
-		const dim3 blocks{kImageWidth / threads.x + 1, kImageHeight / threads.y + 1};
-		Render<<<blocks, threads>>>(*image, *camera, *scene, kSamplesPerPixel, kMaxDepth);
+		const dim3 blocks{scene->image_width / threads.x + 1, scene->image_height / threads.y + 1};
+		Render<<<blocks, threads>>>(*scene, *image);
 		CHECK_CUDA_ERRORS(cudaGetLastError());
 		CHECK_CUDA_ERRORS(cudaDeviceSynchronize());
 
-		image->SaveAs("img/ch10.png");
+		image->SaveAs("img/ch12.png");
 
 	} catch (std::exception& e) {
 		std::cerr << e.what();
