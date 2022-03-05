@@ -80,7 +80,7 @@ int main() {
 		CHECK_CUDA_ERRORS(cudaGetLastError());
 		CHECK_CUDA_ERRORS(cudaDeviceSynchronize());
 
-		image->SaveAs("img/ch12.png");
+		image->SaveAs("img/ch13.png");
 
 	} catch (std::exception& e) {
 		std::cerr << e.what();
