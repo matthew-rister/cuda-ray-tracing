@@ -16,7 +16,8 @@ public:
 		const glm::vec3& look_at,
 		const float aspect_ratio,
 		const float field_of_view_y,
-		const float aperture = 0.f)
+		const float aperture = 0.f,
+		const float focus_distance = 1.f)
 		: origin_{look_from},
 		  radius_{aperture / 2.f} {
 
@@ -29,7 +30,6 @@ public:
 		const auto u = glm::normalize(glm::cross(kWorldUp, w));
 		const auto v = glm::normalize(glm::cross(w, u));
 
-		const auto focus_distance = glm::length(look_from - look_at);
 		horizontal_ = focus_distance * viewport_width * u;
 		vertical_ = focus_distance * viewport_height * v;
 		lower_left_corner_ = origin_ - horizontal_ / 2.f - vertical_ / 2.f - focus_distance * w;

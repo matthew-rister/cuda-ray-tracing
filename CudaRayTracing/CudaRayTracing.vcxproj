@@ -28,6 +28,7 @@
     <Image Include="img\ch10.png" />
     <Image Include="img\ch11.png" />
     <Image Include="img\ch12.png" />
+    <Image Include="img\ch13.png" />
     <Image Include="img\ch2.png" />
     <Image Include="img\ch4.png" />
     <Image Include="img\ch5.png" />
@@ -101,7 +102,7 @@
       <Optimization>Od</Optimization>
       <RuntimeChecks>RTC1</RuntimeChecks>
       <TypeInfo>true</TypeInfo>
-      <CodeGeneration>compute_80,sm_80</CodeGeneration>
+      <CodeGeneration>compute_86,sm_86</CodeGeneration>
     </CudaCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -130,7 +131,7 @@
       <Warning>W4</Warning>
       <RuntimeChecks>InheritFromHost</RuntimeChecks>
       <TypeInfo>false</TypeInfo>
-      <CodeGeneration>compute_80,sm_80</CodeGeneration>
+      <CodeGeneration>compute_86,sm_86</CodeGeneration>
       <HostDebugInfo>false</HostDebugInfo>
       <DebugInformationFormat>None</DebugInformationFormat>
       <GPUDebugInfo>false</GPUDebugInfo>

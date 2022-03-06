@@ -1,4 +1,5 @@
-﻿#include <cmath>
+﻿#include <chrono>
+#include <cmath>
 #include <iostream>
 
 #include <cuda_runtime.h>
@@ -15,11 +16,13 @@
 #include "rt/ray.cuh"
 #include "rt/scene.cuh"
 
+using namespace glm;
 using namespace rt;
+using namespace std;
 
 namespace {
 
-__device__ glm::vec3 TracePath(const Scene& scene, Ray ray, curandState_t* random_state) {
+__device__ vec3 TracePath(const Scene& scene, Ray ray, curandState_t* random_state) {
 
 	for (auto i = 0; i < scene.max_depth; ++i) {
 		Intersection closest_intersection;
@@ -36,11 +39,11 @@ __device__ glm::vec3 TracePath(const Scene& scene, Ray ray, curandState_t* rando
 			ray = closest_intersection.material->Scatter(ray, closest_intersection, random_state);
 		} else {
 			const auto t = .5f * (ray.direction().y + 1.f);
-			return ray.color() * glm::mix(glm::vec3{1.f}, glm::vec3{.5f, .7f, 1.f}, t);
+			return ray.color() * mix(vec3{1.f}, vec3{.5f, .7f, 1.f}, t);
 		}
 	}
 
-	return glm::vec3{0.f};
+	return vec3{0.f};
 }
 
 __global__ void Render(const Scene& scene, const Image& image) {
@@ -52,7 +55,7 @@ __global__ void Render(const Scene& scene, const Image& image) {
 		curandState_t random_state;
 		curand_init(0, thread_id, 0, &random_state);
 
-		glm::vec3 accumulated_color{0.f};
+		vec3 accumulated_color{0.f};
 		for (auto k = 0; k < scene.samples_per_pixel; ++k) {
 			const auto u = (j + curand_uniform(&random_state)) / (image.width() - 1.f);
 			const auto v = (i + curand_uniform(&random_state)) / (image.height() - 1.f);
@@ -61,7 +64,7 @@ __global__ void Render(const Scene& scene, const Image& image) {
 		}
 
 		const auto average_color = accumulated_color / static_cast<float>(scene.samples_per_pixel);
-		const auto gamma_correction = glm::sqrt(average_color);
+		const auto gamma_correction = sqrt(average_color);
 		image(i, j) = static_cast<float>(Image::kMaxColorValue) * gamma_correction;
 	}
 }
@@ -71,6 +74,7 @@ __global__ void Render(const Scene& scene, const Image& image) {
 int main() {
 
 	try {
+		const auto start_time = chrono::high_resolution_clock::now();
 		const auto scene = Scene::MakeCudaManaged();
 		const auto image = Image::MakeCudaManaged(scene->image_width, scene->image_height);
 
@@ -80,10 +84,12 @@ int main() {
 		CHECK_CUDA_ERRORS(cudaGetLastError());
 		CHECK_CUDA_ERRORS(cudaDeviceSynchronize());
 
-		image->SaveAs("img/ch12.png");
+		image->SaveAs("img/ch13.png");
+		const auto end_time = chrono::high_resolution_clock::now();
+		cout << "Image rendered in " << chrono::duration<double>{end_time - start_time}.count() << " seconds\n";
 
-	} catch (std::exception& e) {
-		std::cerr << e.what();
+	} catch (exception& e) {
+		cerr << e.what();
 		cudaDeviceReset();
 		return EXIT_FAILURE;
 	}
