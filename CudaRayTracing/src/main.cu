@@ -56,14 +56,14 @@ __global__ void Render(const Scene& scene, const Image& image) {
 		curand_init(0, thread_id, 0, &random_state);
 
 		vec3 accumulated_color{0.f};
-		for (auto k = 0; k < scene.samples_per_pixel; ++k) {
+		for (auto k = 0; k < scene.samples; ++k) {
 			const auto u = (j + curand_uniform(&random_state)) / (image.width() - 1.f);
 			const auto v = (i + curand_uniform(&random_state)) / (image.height() - 1.f);
 			const auto ray = scene.camera->RayThrough(u, v, &random_state);
 			accumulated_color += TracePath(scene, ray, &random_state);
 		}
 
-		const auto average_color = accumulated_color / static_cast<float>(scene.samples_per_pixel);
+		const auto average_color = accumulated_color / static_cast<float>(scene.samples);
 		const auto gamma_correction = sqrt(average_color);
 		image(i, j) = static_cast<float>(Image::kMaxColorValue) * gamma_correction;
 	}
@@ -89,7 +89,7 @@ int main() {
 		cout << "Image rendered in " << chrono::duration<double>{end_time - start_time}.count() << " seconds\n";
 
 	} catch (exception& e) {
-		cerr << e.what();
+		cerr << e.what() << endl;
 		cudaDeviceReset();
 		return EXIT_FAILURE;
 	}

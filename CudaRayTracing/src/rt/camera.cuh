@@ -9,7 +9,7 @@
 
 namespace rt {
 
-class Camera final {
+class Camera {
 
 public:
 	__device__ Camera(
@@ -60,4 +60,4 @@ private:
 	float radius_;
 };
 
-} // namespace rt
+}

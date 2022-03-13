@@ -6,6 +6,8 @@
 
 #include "cuda_error_check.cuh"
 
+namespace rt {
+
 template <typename T>
 class CudaManaged {
 
@@ -27,3 +29,5 @@ public:
 		CHECK_CUDA_ERRORS(cudaFree(ptr));
 	}
 };
+
+}

@@ -100,4 +100,5 @@ private:
 
 	float refractive_index_;
 };
-} // namespace rt
+
+}

@@ -22,4 +22,4 @@ public:
 	__device__ [[nodiscard]] virtual Intersection Intersect(const Ray& ray, float t_min, float t_max) const = 0;
 };
 
-} // namespace rt
+}

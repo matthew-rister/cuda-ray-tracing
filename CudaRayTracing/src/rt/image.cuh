@@ -48,4 +48,4 @@ private:
 	Pixel* frame_buffer_ = nullptr;
 };
 
-} // namespace rt
+}

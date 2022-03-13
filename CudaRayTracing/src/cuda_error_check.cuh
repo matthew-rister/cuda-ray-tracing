@@ -12,9 +12,11 @@
 #define CHECK_CUDA_ERRORS_NOTHROW(status) status
 #else
 	#define __FILENAME__ (strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__)
-	#define CHECK_CUDA_ERRORS(status) CheckCudaErrors((status), #status, __FILENAME__, __LINE__, true)
-	#define CHECK_CUDA_ERRORS_NOTHROW(status) CheckCudaErrors((status), #status, __FILENAME__, __LINE__, false)
+	#define CHECK_CUDA_ERRORS(status) rt::CheckCudaErrors((status), #status, __FILENAME__, __LINE__, true)
+	#define CHECK_CUDA_ERRORS_NOTHROW(status) rt::CheckCudaErrors((status), #status, __FILENAME__, __LINE__, false)
 #endif
+
+namespace rt {
 
 inline void CheckCudaErrors(
 	const cudaError_t status, const char* function, const char* filename, const int line_number, const bool throws) {
@@ -26,4 +28,6 @@ inline void CheckCudaErrors(
 		if (throws) throw std::runtime_error{oss.str()};
 		std::cerr << oss.str() << '\n';
 	}
+}
+
 }

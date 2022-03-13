@@ -49,4 +49,4 @@ private:
 	Material* material_;
 };
 
-} // namespace rt
+}
