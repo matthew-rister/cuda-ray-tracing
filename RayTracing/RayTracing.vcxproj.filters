@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="lib">
+      <UniqueIdentifier>{96791855-f6da-4a7e-89c9-b64c8072bb42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="rt">
+      <UniqueIdentifier>{06904612-eaf8-4e73-83c8-4209e1c90a38}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="assets">
+      <UniqueIdentifier>{786bd90e-fb95-43c7-990e-2cb0bcf5dead}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="assets\textures">
+      <UniqueIdentifier>{d53f7a0a-afa5-4f73-be13-2234f2e46159}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="lib\stb_image_write.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="rt\intersection.h">
+      <Filter>rt</Filter>
+    </ClInclude>
+    <ClInclude Include="rt\aabb.h">
+      <Filter>rt</Filter>
+    </ClInclude>
+    <ClInclude Include="rt\camera.h">
+      <Filter>rt</Filter>
+    </ClInclude>
+    <ClInclude Include="rt\material.h">
+      <Filter>rt</Filter>
+    </ClInclude>
+    <ClInclude Include="rt\ray.h">
+      <Filter>rt</Filter>
+    </ClInclude>
+    <ClInclude Include="rt\scene.h">
+      <Filter>rt</Filter>
+    </ClInclude>
+    <ClInclude Include="rt\sphere.h">
+      <Filter>rt</Filter>
+    </ClInclude>
+    <ClInclude Include="rt\bvh.h">
+      <Filter>rt</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\stb_image.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="rt\texture.h">
+      <Filter>rt</Filter>
+    </ClInclude>
+    <ClInclude Include="rt\rectangle.h">
+      <Filter>rt</Filter>
+    </ClInclude>
+    <ClInclude Include="rt\image.h">
+      <Filter>rt</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="assets\textures\earth.jpg">
+      <Filter>assets\textures</Filter>
+    </Image>
+  </ItemGroup>
+</Project>
