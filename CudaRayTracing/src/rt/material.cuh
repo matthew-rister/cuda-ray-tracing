@@ -5,6 +5,7 @@
 #include <cuda_runtime_api.h>
 #include <curand_kernel.h>
 #include <glm/glm.hpp>
+#include <glm/gtx/norm.hpp>
 
 #include "rt/intersection.cuh"
 #include "rt/ray.cuh"
@@ -27,7 +28,7 @@ protected:
 			const auto y = curand_uniform(random_state);
 			const auto z = curand_uniform(random_state);
 			v = 2.f * glm::vec3{x, y, z} - glm::vec3{1.f};
-		} while (glm::dot(v, v) > 1.f);
+		} while (glm::length2(v) > 1.f);
 		return glm::normalize(v);
 	}
 };

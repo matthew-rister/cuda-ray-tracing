@@ -14,6 +14,7 @@
     <CudaCompile Include="src\main.cu" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\rt\hittable.cuh" />
     <ClInclude Include="src\cuda_error_check.cuh" />
     <ClInclude Include="src\cuda_managed.cuh" />
     <ClInclude Include="src\rt\camera.cuh" />

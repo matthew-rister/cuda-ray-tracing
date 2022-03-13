@@ -26,17 +26,19 @@ __device__ vec3 TracePath(const Scene& scene, Ray ray, curandState_t* random_sta
 
 	for (auto i = 0; i < scene.max_depth; ++i) {
 		Intersection closest_intersection;
+		Hittable* closest_object = nullptr;
 		auto t_max = INFINITY;
 
 		for (auto j = 0; j < scene.size; ++j) {
 			if (const auto intersection = scene.objects[j]->Intersect(ray, 0.001f, t_max); intersection.hit) {
 				closest_intersection = intersection;
+				closest_object = scene.objects[j];
 				t_max = intersection.t;
 			}
 		}
 
-		if (closest_intersection.hit) {
-			ray = closest_intersection.material->Scatter(ray, closest_intersection, random_state);
+		if (closest_object) {
+			ray = closest_object->material()->Scatter(ray, closest_intersection, random_state);
 		} else {
 			const auto t = .5f * (ray.direction().y + 1.f);
 			return ray.color() * mix(vec3{1.f}, vec3{.5f, .7f, 1.f}, t);

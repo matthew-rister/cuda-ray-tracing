@@ -5,19 +5,18 @@
 #include <cuda_runtime_api.h>
 #include <glm/glm.hpp>
 
+#include "rt/hittable.cuh"
 #include "rt/intersection.cuh"
 #include "rt/material.cuh"
 #include "rt/ray.cuh"
 
 namespace rt {
 
-class Sphere final : public Intersectable {
+class Sphere final : public Hittable {
 
 public:
-	__device__ Sphere(const glm::vec3& center, const float radius, Material* material) noexcept
-		: center_{center}, radius_{radius}, material_{material} {}
-
-	~Sphere() override { delete material_; }
+	__device__ Sphere(const glm::vec3& center, const float radius, const Material* material) noexcept
+		: Hittable{material}, center_{center}, radius_{radius} {}
 
 	__device__ [[nodiscard]] Intersection Intersect(
 		const Ray& ray, const float t_min, const float t_max) const override {
@@ -40,13 +39,12 @@ public:
 		const auto point = ray.PointAt(t);
 		const auto normal = (point - center_) / radius_;
 		const auto front_facing = glm::dot(ray.direction(), normal) < 0.f;
-		return {point, front_facing ? normal : -normal, t, front_facing, true, material_};
+		return {point, front_facing ? normal : -normal, t, front_facing, true};
 	}
 
 private:
 	glm::vec3 center_;
 	float radius_;
-	Material* material_;
 };
 
 }

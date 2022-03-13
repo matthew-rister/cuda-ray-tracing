@@ -42,6 +42,9 @@
     <ClInclude Include="src\rt\scene.cuh">
       <Filter>src\rt</Filter>
     </ClInclude>
+    <ClInclude Include="src\rt\hittable.cuh">
+      <Filter>src\rt</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="img\ch10.png">
