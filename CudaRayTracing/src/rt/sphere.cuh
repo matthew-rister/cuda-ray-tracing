@@ -17,7 +17,7 @@ public:
 	__device__ Sphere(const glm::vec3& center, const float radius, Material* material) noexcept
 		: center_{center}, radius_{radius}, material_{material} {}
 
-	__device__ ~Sphere() override { delete material_; }
+	~Sphere() override { delete material_; }
 
 	__device__ [[nodiscard]] Intersection Intersect(
 		const Ray& ray, const float t_min, const float t_max) const override {

@@ -44,27 +44,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="img\ch2.png">
-      <Filter>img</Filter>
-    </Image>
-    <Image Include="img\ch4.png">
-      <Filter>img</Filter>
-    </Image>
-    <Image Include="img\ch5.png">
-      <Filter>img</Filter>
-    </Image>
-    <Image Include="img\ch6.png">
-      <Filter>img</Filter>
-    </Image>
-    <Image Include="img\ch7.png">
-      <Filter>img</Filter>
-    </Image>
-    <Image Include="img\ch8.png">
-      <Filter>img</Filter>
-    </Image>
-    <Image Include="img\ch9.png">
-      <Filter>img</Filter>
-    </Image>
     <Image Include="img\ch10.png">
       <Filter>img</Filter>
     </Image>
@@ -75,6 +54,27 @@
       <Filter>img</Filter>
     </Image>
     <Image Include="img\ch13.png">
+      <Filter>img</Filter>
+    </Image>
+    <Image Include="img\ch09.png">
+      <Filter>img</Filter>
+    </Image>
+    <Image Include="img\ch02.png">
+      <Filter>img</Filter>
+    </Image>
+    <Image Include="img\ch04.png">
+      <Filter>img</Filter>
+    </Image>
+    <Image Include="img\ch05.png">
+      <Filter>img</Filter>
+    </Image>
+    <Image Include="img\ch06.png">
+      <Filter>img</Filter>
+    </Image>
+    <Image Include="img\ch07.png">
+      <Filter>img</Filter>
+    </Image>
+    <Image Include="img\ch08.png">
       <Filter>img</Filter>
     </Image>
   </ItemGroup>

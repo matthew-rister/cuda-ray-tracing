@@ -3,6 +3,7 @@
 #include <cuda_runtime_api.h>
 #include <curand_kernel.h>
 #include <glm/glm.hpp>
+#include <glm/gtx/norm.hpp>
 
 #include "rt/ray.cuh"
 
@@ -25,9 +26,9 @@ public:
 		const auto viewport_height = 2.f * std::tan(theta / 2.f);
 		const auto viewport_width = aspect_ratio * viewport_height;
 
-		constexpr glm::vec3 kWorldUp{0.f, 1.f, 0.f};
+		const glm::vec3 world_up{0.f, 1.f, 0.f};
 		const auto w = glm::normalize(look_from - look_at);
-		const auto u = glm::normalize(glm::cross(kWorldUp, w));
+		const auto u = glm::normalize(glm::cross(world_up, w));
 		const auto v = glm::normalize(glm::cross(w, u));
 
 		horizontal_ = focus_distance * viewport_width * u;
@@ -49,7 +50,7 @@ private:
 			const auto x = curand_uniform(random_state);
 			const auto y = curand_uniform(random_state);
 			v = 2.f * glm::vec2{x, y} - 1.f;
-		} while (glm::dot(v, v) > 1.f);
+		} while (glm::length2(v) > 1.f);
 		return v;
 	}
 

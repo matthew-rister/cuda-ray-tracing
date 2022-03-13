@@ -17,14 +17,13 @@ namespace rt {
 class Image final : public CudaManaged<Image> {
 
 public:
-	using color_t = std::uint8_t;
-	using pixel_t = glm::vec<3, color_t>;
-	static constexpr int kMaxColorValue = std::numeric_limits<color_t>::max();
-	static constexpr int kColorChannels = pixel_t::length();
+	using Color = std::uint8_t;
+	using Pixel = glm::vec<3, Color>;
+
+	static constexpr int kMaxColorValue = std::numeric_limits<Color>::max();
 
 	Image(const int width, const int height) noexcept : width_{width}, height_{height} {
-		const auto size = sizeof(pixel_t) * width_ * height_;
-		CHECK_CUDA_ERRORS(cudaMallocManaged(reinterpret_cast<void**>(&frame_buffer_), size));
+		CHECK_CUDA_ERRORS(cudaMallocManaged(reinterpret_cast<void**>(&frame_buffer_), sizeof(Pixel) * width_* height_));
 	}
 
 	~Image() { CHECK_CUDA_ERRORS_NOTHROW(cudaFree(frame_buffer_)); }
@@ -32,14 +31,12 @@ public:
 	__device__ [[nodiscard]] int width() const noexcept { return width_; }
 	__device__ [[nodiscard]] int height() const noexcept { return height_; }
 
-	__device__ pixel_t& operator()(const int i, const int j) const noexcept {
-		return frame_buffer_[i * width_ + j];
-	}
+	__device__ Pixel& operator()(const int i, const int j) const noexcept { return frame_buffer_[i * width_ + j]; }
 
 	void SaveAs(const char* const filename) const {
 		stbi_flip_vertically_on_write(true);
 
-		if (!stbi_write_png(filename, width_, height_, kColorChannels, frame_buffer_, width_ * kColorChannels)) {
+		if (!stbi_write_png(filename, width_, height_, channels_, frame_buffer_, width_ * channels_)) {
 			std::ostringstream oss;
 			oss << "An error occurred while attempting to save " << filename;
 			throw std::runtime_error{oss.str()};
@@ -47,8 +44,8 @@ public:
 	}
 
 private:
-	int width_, height_;
-	pixel_t* frame_buffer_{};
+	int width_, height_, channels_ = Pixel::length();
+	Pixel* frame_buffer_ = nullptr;
 };
 
 } // namespace rt

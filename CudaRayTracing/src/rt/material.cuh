@@ -14,7 +14,8 @@ namespace rt {
 class Material {
 
 public:
-	__device__ virtual ~Material() {}
+	virtual ~Material() = default;
+
 	__device__ [[nodiscard]] virtual Ray Scatter(
 		const Ray& ray, const Intersection& intersection, curandState_t* random_state) const = 0;
 
@@ -79,8 +80,8 @@ public:
 		const auto refraction_ratio = intersection.front_facing ? 1.f / refractive_index_ : refractive_index_;
 		const auto cos_theta = std::fmin(glm::dot(-ray.direction(), intersection.normal), 1.f);
 		const auto direction = CanRefract(cos_theta, refraction_ratio, random_state)
-			? glm::refract(ray.direction(), intersection.normal, refraction_ratio)
-			: glm::reflect(ray.direction(), intersection.normal);
+			                       ? glm::refract(ray.direction(), intersection.normal, refraction_ratio)
+			                       : glm::reflect(ray.direction(), intersection.normal);
 		return Ray{intersection.point, direction, ray.color()};
 	}
 

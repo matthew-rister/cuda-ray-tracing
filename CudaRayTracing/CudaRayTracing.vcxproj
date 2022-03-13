@@ -25,17 +25,17 @@
     <ClInclude Include="src\rt\sphere.cuh" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="img\ch02.png" />
+    <Image Include="img\ch04.png" />
+    <Image Include="img\ch05.png" />
+    <Image Include="img\ch06.png" />
+    <Image Include="img\ch07.png" />
+    <Image Include="img\ch08.png" />
+    <Image Include="img\ch09.png" />
     <Image Include="img\ch10.png" />
     <Image Include="img\ch11.png" />
     <Image Include="img\ch12.png" />
     <Image Include="img\ch13.png" />
-    <Image Include="img\ch2.png" />
-    <Image Include="img\ch4.png" />
-    <Image Include="img\ch5.png" />
-    <Image Include="img\ch6.png" />
-    <Image Include="img\ch7.png" />
-    <Image Include="img\ch8.png" />
-    <Image Include="img\ch9.png" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{EC098A88-B4A7-4592-BD8F-B8053FA17934}</ProjectGuid>
@@ -95,7 +95,7 @@
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
       <Include>$(ProjectDir)src</Include>
-      <Defines>STB_IMAGE_WRITE_IMPLEMENTATION;GLM_FORCE_SILENT_WARNINGS;GLM_FORCE_CXX17</Defines>
+      <Defines>STB_IMAGE_WRITE_IMPLEMENTATION;GLM_FORCE_SILENT_WARNINGS;</Defines>
       <AdditionalOptions>-std=c++17 -Xcompiler "/std:c++17"  -Xcudafe --diag_suppress=20012 %(AdditionalOptions)</AdditionalOptions>
       <Warning>W4</Warning>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
@@ -125,7 +125,7 @@
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
       <Include>$(ProjectDir)src</Include>
-      <Defines>NDEBUG;STB_IMAGE_WRITE_IMPLEMENTATION;GLM_FORCE_SILENT_WARNINGS;GLM_FORCE_CXX17</Defines>
+      <Defines>NDEBUG;STB_IMAGE_WRITE_IMPLEMENTATION;GLM_FORCE_SILENT_WARNINGS;</Defines>
       <AdditionalOptions>-std=c++17 -Xcompiler "/std:c++17"  -Xcudafe --diag_suppress=20012 %(AdditionalOptions)</AdditionalOptions>
       <Optimization>O3</Optimization>
       <Warning>W4</Warning>
