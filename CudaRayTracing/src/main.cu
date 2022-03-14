@@ -71,7 +71,7 @@ __global__ void Render(const Scene& scene, const Image& image) {
 	}
 }
 
-} // namespace
+}
 
 int main() {
 
