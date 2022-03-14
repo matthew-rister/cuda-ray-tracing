@@ -232,10 +232,10 @@ private:
 
 	static Scene MakeSimpleLights() {
 
-		constexpr auto kAspectRatio = 3. / 2.;
-		constexpr auto kImageWidth = 400;
+		constexpr auto kAspectRatio = 16. / 9.;
+		constexpr auto kImageWidth = 1440;
 		constexpr auto kImageHeight = static_cast<int>(kImageWidth / kAspectRatio);
-		constexpr auto kSamplesPerPixel = 400;
+		constexpr auto kSamplesPerPixel = 500;
 		constexpr auto kMaxDepth = 50;
 		constexpr glm::dvec3 kBackgroundColor{0.};
 		Image image{kImageWidth, kImageHeight};

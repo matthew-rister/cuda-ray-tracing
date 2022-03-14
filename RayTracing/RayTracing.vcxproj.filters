@@ -16,6 +16,9 @@
     <Filter Include="assets\textures">
       <UniqueIdentifier>{d53f7a0a-afa5-4f73-be13-2234f2e46159}</UniqueIdentifier>
     </Filter>
+    <Filter Include="img">
+      <UniqueIdentifier>{62aed7d7-50ed-4d9b-b22a-70e61c1aae82}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lib\stb_image_write.h">
@@ -61,6 +64,9 @@
   <ItemGroup>
     <Image Include="assets\textures\earth.jpg">
       <Filter>assets\textures</Filter>
+    </Image>
+    <Image Include="img\simple_lights.png">
+      <Filter>img</Filter>
     </Image>
   </ItemGroup>
 </Project>

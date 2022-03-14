@@ -248,6 +248,7 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="assets\textures\earth.jpg" />
+    <Image Include="img\simple_lights.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
