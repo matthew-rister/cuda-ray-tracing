@@ -21,7 +21,7 @@ public:
 		const Ray& ray, const Intersection& intersection, curandState_t* random_state) const = 0;
 
 protected:
-	__device__ glm::vec3 MakeRandomVectorInUnitSphere(curandState_t* random_state) const {
+	__device__ glm::vec3 MakeRandomVectorInUnitSphere(curandState_t* const random_state) const {
 		glm::vec3 v;
 		do {
 			const auto x = curand_uniform(random_state);
@@ -41,8 +41,7 @@ public:
 	__device__ [[nodiscard]] Ray Scatter(
 		const Ray& ray, const Intersection& intersection, curandState_t* random_state) const override {
 		auto reflection_direction = intersection.normal + MakeRandomVectorInUnitSphere(random_state);
-		const auto length_squared = glm::dot(reflection_direction, reflection_direction);
-		if (constexpr auto kEpsilon = 1e-9f; length_squared < kEpsilon * kEpsilon) {
+		if (constexpr auto kEpsilon = 1e-9f; glm::length2(reflection_direction) < kEpsilon * kEpsilon) {
 			reflection_direction = intersection.normal; // handle case where reflected direction is the zero vector
 		}
 		return Ray{intersection.point, reflection_direction, ray.color() * albedo_};
@@ -73,11 +72,10 @@ private:
 class Dielectric final : public Material {
 
 public:
-	__device__ explicit Dielectric(const float refractive_index) noexcept
-		: refractive_index_{refractive_index} {}
+	__device__ explicit Dielectric(const float refractive_index) noexcept : refractive_index_{refractive_index} {}
 
 	__device__ [[nodiscard]] Ray Scatter(
-		const Ray& ray, const Intersection& intersection, curandState_t* random_state) const override {
+		const Ray& ray, const Intersection& intersection, curandState_t* const random_state) const override {
 		const auto refraction_ratio = intersection.front_facing ? 1.f / refractive_index_ : refractive_index_;
 		const auto cos_theta = std::fmin(glm::dot(-ray.direction(), intersection.normal), 1.f);
 		const auto direction = CanRefract(cos_theta, refraction_ratio, random_state)
@@ -88,7 +86,7 @@ public:
 
 private:
 	__device__ static bool CanRefract(
-		const float cos_theta, const float refraction_ratio, curandState_t* random_state) {
+		const float cos_theta, const float refraction_ratio, curandState_t* const random_state) {
 
 		// verify solution to snell's law exists
 		const auto sin_theta = std::sqrtf(1.f - cos_theta * cos_theta);

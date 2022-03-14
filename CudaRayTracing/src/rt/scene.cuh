@@ -15,14 +15,14 @@
 namespace rt {
 
 __global__ void CreateSceneObjects(
-	Camera** camera,
-	Hittable*** objects,
-	int* size,
-	float* aspect_ratio,
-	int* image_height,
-	int* image_width,
-	int* samples,
-	int* max_depth) {
+	Camera** const camera,
+	Hittable*** const objects,
+	int* const size,
+	float* const aspect_ratio,
+	int* const image_height,
+	int* const image_width,
+	int* const samples,
+	int* const max_depth) {
 
 	if (blockIdx.x != 0 || threadIdx.x != 0) return;
 

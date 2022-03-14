@@ -15,7 +15,7 @@ namespace rt {
 class Sphere final : public Hittable {
 
 public:
-	__device__ Sphere(const glm::vec3& center, const float radius, const Material* material) noexcept
+	__device__ Sphere(const glm::vec3& center, const float radius, const Material* const material) noexcept
 		: Hittable{material}, center_{center}, radius_{radius} {}
 
 	__device__ [[nodiscard]] Intersection Intersect(
