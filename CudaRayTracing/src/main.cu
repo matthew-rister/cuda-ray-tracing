@@ -7,8 +7,7 @@
 #include <device_launch_parameters.h>
 #include <glm/glm.hpp>
 
-#include "cuda_error_check.cuh"
-#include "cuda_managed.cuh"
+#include "common/cuda_error_check.cuh"
 #include "rt/camera.cuh"
 #include "rt/image.cuh"
 #include "rt/intersection.cuh"

@@ -27,10 +27,10 @@
     <ClInclude Include="src\rt\intersection.cuh">
       <Filter>src\rt</Filter>
     </ClInclude>
-    <ClInclude Include="src\cuda_error_check.cuh">
+    <ClInclude Include="src\common\cuda_error_check.cuh">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\cuda_managed.cuh">
+    <ClInclude Include="src\common\cuda_managed.cuh">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\rt\material.cuh">

@@ -15,8 +15,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\rt\hittable.cuh" />
-    <ClInclude Include="src\cuda_error_check.cuh" />
-    <ClInclude Include="src\cuda_managed.cuh" />
+    <ClInclude Include="src\common\cuda_error_check.cuh" />
+    <ClInclude Include="src\common\cuda_managed.cuh" />
     <ClInclude Include="src\rt\camera.cuh" />
     <ClInclude Include="src\rt\intersection.cuh" />
     <ClInclude Include="src\rt\material.cuh" />

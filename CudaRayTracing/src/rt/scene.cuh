@@ -4,9 +4,8 @@
 #include <device_launch_parameters.h>
 #include <glm/glm.hpp>
 
-#include "cuda_error_check.cuh"
-#include "cuda_managed.cuh"
-
+#include "common/cuda_error_check.cuh"
+#include "common/cuda_managed.cuh"
 #include "rt/camera.cuh"
 #include "rt/hittable.cuh"
 #include "rt/material.cuh"
