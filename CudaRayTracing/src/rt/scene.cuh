@@ -7,7 +7,7 @@
 #include "common/cuda_error_check.cuh"
 #include "common/cuda_managed.cuh"
 #include "rt/camera.cuh"
-#include "rt/hittable.cuh"
+#include "rt/intersection.cuh"
 #include "rt/material.cuh"
 #include "rt/sphere.cuh"
 
@@ -15,7 +15,7 @@ namespace rt {
 
 __global__ void CreateSceneObjects(
 	Camera*& camera,
-	Hittable**& objects,
+	Intersectable**& objects,
 	int& size,
 	float& aspect_ratio,
 	int& image_height,
@@ -26,15 +26,15 @@ __global__ void CreateSceneObjects(
 	if (blockIdx.x != 0 || threadIdx.x != 0) return;
 
 	aspect_ratio = 16.f / 9.f;
-	image_height = 440;
+	image_height = 1440;
 	image_width = static_cast<int>(aspect_ratio * static_cast<float>(image_height));
-	samples = 50;
+	samples = 500;
 	max_depth = 50;
 	camera = new Camera{glm::vec3{13.f, 2.f, 3.f}, glm::vec3{0.f}, aspect_ratio, 20.f};
 
 	constexpr auto n = 18;
 	size = 0;
-	objects = new Hittable*[4 + n * n];
+	objects = new Intersectable*[4 + n * n];
 	objects[size++] = new Sphere{glm::vec3{0.f, -1000.f, 0.f}, 1000.f, new Lambertian{glm::vec3{.5f}}};
 	objects[size++] = new Sphere{glm::vec3{0.f, 1.f, 0.f}, 1.f, new Dielectric{1.5f}};
 	objects[size++] = new Sphere{glm::vec3{-4.f, 1.f, 0.f}, 1.f, new Lambertian{glm::vec3{.4f, .2f, .1f}}};
@@ -76,7 +76,7 @@ __global__ void CreateSceneObjects(
 	}
 }
 
-__global__ void DeleteSceneObjects(Camera** camera, Hittable*** objects) {
+__global__ void DeleteSceneObjects(Camera** camera, Intersectable*** objects) {
 	if (blockIdx.x == 0 && threadIdx.x == 0) {
 		delete *camera;
 		delete[] *objects;
@@ -98,7 +98,7 @@ struct Scene final : CudaManaged<Scene> {
 	}
 
 	Camera* camera;
-	Hittable** objects;
+	Intersectable** objects;
 	int size;
 	float aspect_ratio;
 	int image_height, image_width;

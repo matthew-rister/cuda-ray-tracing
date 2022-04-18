@@ -39,9 +39,6 @@
     <ClInclude Include="src\rt\scene.cuh">
       <Filter>src\rt</Filter>
     </ClInclude>
-    <ClInclude Include="src\rt\hittable.cuh">
-      <Filter>src\rt</Filter>
-    </ClInclude>
     <ClInclude Include="src\common\cuda_managed.cuh">
       <Filter>src\common</Filter>
     </ClInclude>
