@@ -26,7 +26,7 @@ inline void CheckCudaErrors(
 		std::ostringstream oss;
 		oss << function << " failed at " << filename << ':' << line_number << " with error \"" << error << '\"';
 		if (throws) throw std::runtime_error{oss.str()};
-		std::cerr << oss.str() << '\n';
+		std::cerr << oss.str();
 	}
 }
 }
