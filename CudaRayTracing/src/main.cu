@@ -2,6 +2,7 @@
 #include <cmath>
 #include <iostream>
 
+#include <cuda/std/limits>
 #include <cuda_runtime.h>
 #include <curand_kernel.h>
 #include <device_launch_parameters.h>
@@ -25,7 +26,7 @@ __device__ vec3 TracePath(const Scene& scene, Ray ray, curandState_t* random_sta
 
 	for (auto i = 0; i < scene.max_depth; ++i) {
 		Intersection closest_intersection;
-		auto t_max = INFINITY;
+		auto t_max = cuda::std::numeric_limits<float>::infinity();
 
 		for (auto j = 0; j < scene.size; ++j) {
 			if (const auto intersection = scene.objects[j]->Intersect(ray, 0.001f, t_max); intersection.hit) {
