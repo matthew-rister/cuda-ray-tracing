@@ -10,6 +10,9 @@
     <Filter Include="src\rt">
       <UniqueIdentifier>{f10d9dbf-ac9e-4819-b38b-3258bad5b7a9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\common">
+      <UniqueIdentifier>{6efca917-3f7d-48b0-81dd-e089fcf3c86f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\rt\image.cuh">
@@ -27,12 +30,6 @@
     <ClInclude Include="src\rt\intersection.cuh">
       <Filter>src\rt</Filter>
     </ClInclude>
-    <ClInclude Include="src\common\cuda_error_check.cuh">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\common\cuda_managed.cuh">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="src\rt\material.cuh">
       <Filter>src\rt</Filter>
     </ClInclude>
@@ -44,6 +41,12 @@
     </ClInclude>
     <ClInclude Include="src\rt\hittable.cuh">
       <Filter>src\rt</Filter>
+    </ClInclude>
+    <ClInclude Include="src\common\cuda_managed.cuh">
+      <Filter>src\common</Filter>
+    </ClInclude>
+    <ClInclude Include="src\common\cuda_error_check.cuh">
+      <Filter>src\common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
