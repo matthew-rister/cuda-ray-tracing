@@ -14,10 +14,10 @@ public:
 	__device__ explicit Hittable(const Material* const material) noexcept : material_{material} {}
 	virtual ~Hittable() { delete material_; }
 
-	__device__ [[nodiscard]] const Material* material() const noexcept { return material_; }
+	__device__ [[nodiscard]] const Material* Material() const noexcept { return material_; }
 	__device__ [[nodiscard]] virtual Intersection Intersect(const Ray& ray, float t_min, float t_max) const = 0;
 
 protected:
-	const Material* material_;
+	const rt::Material* material_;
 };
 }

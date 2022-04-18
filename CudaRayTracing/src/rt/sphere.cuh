@@ -15,15 +15,15 @@ namespace rt {
 class Sphere final : public Hittable {
 
 public:
-	__device__ Sphere(const glm::vec3& center, const float radius, const Material* const material) noexcept
+	__device__ Sphere(const glm::vec3& center, const float radius, const rt::Material* const material) noexcept
 		: Hittable{material}, center_{center}, radius_{radius} {}
 
 	__device__ [[nodiscard]] Intersection Intersect(
 		const Ray& ray, const float t_min, const float t_max) const override {
 
-		const auto d = ray.origin() - center_;
-		const auto a = glm::dot(ray.direction(), ray.direction());
-		const auto half_b = glm::dot(ray.direction(), d);
+		const auto d = ray.Origin() - center_;
+		const auto a = glm::dot(ray.Direction(), ray.Direction());
+		const auto half_b = glm::dot(ray.Direction(), d);
 		const auto c = glm::dot(d, d) - radius_ * radius_;
 
 		const auto discriminant = half_b * half_b - a * c;
@@ -38,7 +38,7 @@ public:
 
 		const auto point = ray.PointAt(t);
 		const auto normal = (point - center_) / radius_;
-		const auto front_facing = glm::dot(ray.direction(), normal) < 0.f;
+		const auto front_facing = glm::dot(ray.Direction(), normal) < 0.f;
 		return {point, front_facing ? normal : -normal, t, front_facing, true};
 	}
 

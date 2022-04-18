@@ -44,7 +44,7 @@ public:
 		if (constexpr auto kEpsilon = 1e-9f; glm::length2(reflection_direction) < kEpsilon * kEpsilon) {
 			reflection_direction = intersection.normal; // handle case where reflected direction is the zero vector
 		}
-		return Ray{intersection.point, reflection_direction, ray.color() * albedo_};
+		return Ray{intersection.point, reflection_direction, ray.Color() * albedo_};
 	}
 
 private:
@@ -59,9 +59,9 @@ public:
 
 	__device__ [[nodiscard]] Ray Scatter(
 		const Ray& ray, const Intersection& intersection, curandState_t* random_state) const override {
-		const auto reflection_direction = glm::reflect(ray.direction(), intersection.normal);
+		const auto reflection_direction = glm::reflect(ray.Direction(), intersection.normal);
 		const auto fuzz_direction = fuzz_ * MakeRandomVectorInUnitSphere(random_state);
-		return Ray{intersection.point, reflection_direction + fuzz_direction, ray.color() * albedo_};
+		return Ray{intersection.point, reflection_direction + fuzz_direction, ray.Color() * albedo_};
 	}
 
 private:
@@ -77,11 +77,11 @@ public:
 	__device__ [[nodiscard]] Ray Scatter(
 		const Ray& ray, const Intersection& intersection, curandState_t* const random_state) const override {
 		const auto refraction_ratio = intersection.front_facing ? 1.f / refractive_index_ : refractive_index_;
-		const auto cos_theta = std::fmin(glm::dot(-ray.direction(), intersection.normal), 1.f);
+		const auto cos_theta = std::fmin(glm::dot(-ray.Direction(), intersection.normal), 1.f);
 		const auto direction = CanRefract(cos_theta, refraction_ratio, random_state)
-			                       ? glm::refract(ray.direction(), intersection.normal, refraction_ratio)
-			                       : glm::reflect(ray.direction(), intersection.normal);
-		return Ray{intersection.point, direction, ray.color()};
+			                       ? glm::refract(ray.Direction(), intersection.normal, refraction_ratio)
+			                       : glm::reflect(ray.Direction(), intersection.normal);
+		return Ray{intersection.point, direction, ray.Color()};
 	}
 
 private:

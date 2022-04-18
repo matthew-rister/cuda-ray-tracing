@@ -28,8 +28,8 @@ public:
 
 	~Image() { CHECK_CUDA_ERRORS_NOTHROW(cudaFree(frame_buffer_)); }
 
-	__device__ [[nodiscard]] int width() const noexcept { return width_; }
-	__device__ [[nodiscard]] int height() const noexcept { return height_; }
+	__device__ [[nodiscard]] int Width() const noexcept { return width_; }
+	__device__ [[nodiscard]] int Height() const noexcept { return height_; }
 
 	__device__ Pixel& operator()(const int i, const int j) const noexcept { return frame_buffer_[i * width_ + j]; }
 

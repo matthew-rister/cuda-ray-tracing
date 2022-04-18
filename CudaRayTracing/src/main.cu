@@ -38,10 +38,10 @@ __device__ vec3 TracePath(const Scene& scene, Ray ray, curandState_t* random_sta
 		}
 
 		if (closest_object) {
-			ray = closest_object->material()->Scatter(ray, closest_intersection, random_state);
+			ray = closest_object->Material()->Scatter(ray, closest_intersection, random_state);
 		} else {
-			const auto t = .5f * (ray.direction().y + 1.f);
-			return ray.color() * mix(vec3{1.f}, vec3{.5f, .7f, 1.f}, t);
+			const auto t = .5f * (ray.Direction().y + 1.f);
+			return ray.Color() * mix(vec3{1.f}, vec3{.5f, .7f, 1.f}, t);
 		}
 	}
 
@@ -52,15 +52,15 @@ __global__ void Render(const Scene& scene, const Image& image) {
 	const auto i = static_cast<int>(blockIdx.y * blockDim.y + threadIdx.y);
 	const auto j = static_cast<int>(blockIdx.x * blockDim.x + threadIdx.x);
 
-	if (i < image.height() && j < image.width()) {
-		const auto thread_id = i * image.width() + j;
+	if (i < image.Height() && j < image.Width()) {
+		const auto thread_id = i * image.Width() + j;
 		curandState_t random_state;
 		curand_init(0, thread_id, 0, &random_state);
 
 		vec3 accumulated_color{0.f};
 		for (auto k = 0; k < scene.samples; ++k) {
-			const auto u = (j + curand_uniform(&random_state)) / (image.width() - 1.f);
-			const auto v = (i + curand_uniform(&random_state)) / (image.height() - 1.f);
+			const auto u = (j + curand_uniform(&random_state)) / (image.Width() - 1.f);
+			const auto v = (i + curand_uniform(&random_state)) / (image.Height() - 1.f);
 			const auto ray = scene.camera->RayThrough(u, v, &random_state);
 			accumulated_color += TracePath(scene, ray, &random_state);
 		}
