@@ -14,31 +14,31 @@
 namespace rt {
 
 __global__ void CreateSceneObjects(
-	Camera** const camera,
-	Hittable*** const objects,
-	int* const size,
-	float* const aspect_ratio,
-	int* const image_height,
-	int* const image_width,
-	int* const samples,
-	int* const max_depth) {
+	Camera*& camera,
+	Hittable**& objects,
+	int& size,
+	float& aspect_ratio,
+	int& image_height,
+	int& image_width,
+	int& samples,
+	int& max_depth) {
 
 	if (blockIdx.x != 0 || threadIdx.x != 0) return;
 
-	*aspect_ratio = 16.f / 9.f;
-	*image_height = 1440;
-	*image_width = static_cast<int>(*aspect_ratio * static_cast<float>(*image_height));
-	*samples = 500;
-	*max_depth = 50;
-	*camera = new Camera{glm::vec3{13.f, 2.f, 3.f}, glm::vec3{0.f}, *aspect_ratio, 20.f};
+	aspect_ratio = 16.f / 9.f;
+	image_height = 440;
+	image_width = static_cast<int>(aspect_ratio * static_cast<float>(image_height));
+	samples = 50;
+	max_depth = 50;
+	camera = new Camera{glm::vec3{13.f, 2.f, 3.f}, glm::vec3{0.f}, aspect_ratio, 20.f};
 
 	constexpr auto n = 18;
-	auto& k = *size = 0;
-	*objects = new Hittable*[4 + n * n];
-	(*objects)[k++] = new Sphere{glm::vec3{0.f, -1000.f, 0.f}, 1000.f, new Lambertian{glm::vec3{.5f}}};
-	(*objects)[k++] = new Sphere{glm::vec3{0.f, 1.f, 0.f}, 1.f, new Dielectric{1.5f}};
-	(*objects)[k++] = new Sphere{glm::vec3{-4.f, 1.f, 0.f}, 1.f, new Lambertian{glm::vec3{.4f, .2f, .1f}}};
-	(*objects)[k++] = new Sphere{glm::vec3{4.f, 1.f, 0.f}, 1.f, new Metal{glm::vec3{.7f, .6f, .5f}}};
+	size = 0;
+	objects = new Hittable*[4 + n * n];
+	objects[size++] = new Sphere{glm::vec3{0.f, -1000.f, 0.f}, 1000.f, new Lambertian{glm::vec3{.5f}}};
+	objects[size++] = new Sphere{glm::vec3{0.f, 1.f, 0.f}, 1.f, new Dielectric{1.5f}};
+	objects[size++] = new Sphere{glm::vec3{-4.f, 1.f, 0.f}, 1.f, new Lambertian{glm::vec3{.4f, .2f, .1f}}};
+	objects[size++] = new Sphere{glm::vec3{4.f, 1.f, 0.f}, 1.f, new Metal{glm::vec3{.7f, .6f, .5f}}};
 
 	curandState_t curand_state;
 	curand_init(0, 0, 0, &curand_state);
@@ -70,7 +70,7 @@ __global__ void CreateSceneObjects(
 				} else {
 					material = new Dielectric{1.5f};
 				}
-				(*objects)[k++] = new Sphere{center, .2f, material};
+				objects[size++] = new Sphere{center, .2f, material};
 			}
 		}
 	}
@@ -86,8 +86,7 @@ __global__ void DeleteSceneObjects(Camera** camera, Hittable*** objects) {
 struct Scene final : CudaManaged<Scene> {
 
 	Scene() {
-		CreateSceneObjects<<<1, 1>>>(
-			&camera, &objects, &size, &aspect_ratio, &image_height, &image_width, &samples, &max_depth);
+		CreateSceneObjects<<<1, 1>>>(camera, objects, size, aspect_ratio, image_height, image_width, samples, max_depth);
 		CHECK_CUDA_ERRORS(cudaGetLastError());
 		CHECK_CUDA_ERRORS(cudaDeviceSynchronize());
 	}
