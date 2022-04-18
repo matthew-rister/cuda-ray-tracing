@@ -31,7 +31,7 @@ __global__ void CreateSceneObjects(
 	*image_width = static_cast<int>(*aspect_ratio * static_cast<float>(*image_height));
 	*samples = 500;
 	*max_depth = 50;
-	*camera = new Camera{glm::vec3{13.f, 2.f, 3.f}, glm::vec3{0.f}, *aspect_ratio, 20.f, .01f, 10.f};
+	*camera = new Camera{glm::vec3{13.f, 2.f, 3.f}, glm::vec3{0.f}, *aspect_ratio, 20.f};
 
 	constexpr auto n = 18;
 	auto& k = *size = 0;

@@ -61,7 +61,7 @@ __global__ void Render(const Scene& scene, const Image& image) {
 		for (auto k = 0; k < scene.samples; ++k) {
 			const auto u = (j + curand_uniform(&random_state)) / (image.Width() - 1.f);
 			const auto v = (i + curand_uniform(&random_state)) / (image.Height() - 1.f);
-			const auto ray = scene.camera->RayThrough(u, v, &random_state);
+			const auto ray = scene.camera->RayThrough(u, v);
 			accumulated_color += TracePath(scene, ray, &random_state);
 		}
 
@@ -85,7 +85,7 @@ int main() {
 		CHECK_CUDA_ERRORS(cudaGetLastError());
 		CHECK_CUDA_ERRORS(cudaDeviceSynchronize());
 
-		image->SaveAs("img/ch13.png");
+		image->SaveAs("img/output.png");
 		const auto end_time = chrono::high_resolution_clock::now();
 		cout << "Image rendered in " << chrono::duration<double>{end_time - start_time}.count() << " seconds\n";
 
