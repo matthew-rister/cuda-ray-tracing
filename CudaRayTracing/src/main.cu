@@ -70,7 +70,6 @@ __global__ void Render(const Scene& scene, const Image& image) {
 		image(i, j) = static_cast<float>(Image::kMaxColorValue) * gamma_correction;
 	}
 }
-
 }
 
 int main() {

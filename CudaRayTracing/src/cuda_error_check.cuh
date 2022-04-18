@@ -29,5 +29,4 @@ inline void CheckCudaErrors(
 		std::cerr << oss.str() << '\n';
 	}
 }
-
 }

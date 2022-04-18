@@ -106,5 +106,4 @@ struct Scene final : CudaManaged<Scene> {
 	int image_height, image_width;
 	int samples, max_depth;
 };
-
 }

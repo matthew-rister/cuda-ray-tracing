@@ -46,5 +46,4 @@ private:
 	glm::vec3 center_;
 	float radius_;
 };
-
 }

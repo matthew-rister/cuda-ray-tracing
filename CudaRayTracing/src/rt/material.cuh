@@ -99,5 +99,4 @@ private:
 
 	float refractive_index_;
 };
-
 }

@@ -47,5 +47,4 @@ private:
 	int width_, height_, channels_ = Pixel::length();
 	Pixel* frame_buffer_ = nullptr;
 };
-
 }

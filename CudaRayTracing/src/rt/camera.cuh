@@ -59,5 +59,4 @@ private:
 	glm::vec3 lower_left_corner_;
 	float radius_;
 };
-
 }

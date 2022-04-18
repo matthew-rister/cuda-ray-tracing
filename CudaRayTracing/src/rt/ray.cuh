@@ -20,5 +20,4 @@ public:
 private:
 	glm::vec3 origin_, direction_, color_;
 };
-
 }

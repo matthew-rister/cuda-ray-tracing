@@ -9,5 +9,4 @@ struct Intersection {
 	float t;
 	bool front_facing, hit = false;
 };
-
 }

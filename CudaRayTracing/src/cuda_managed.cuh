@@ -29,5 +29,4 @@ public:
 		CHECK_CUDA_ERRORS(cudaFree(ptr));
 	}
 };
-
 }
