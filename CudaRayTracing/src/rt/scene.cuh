@@ -76,10 +76,10 @@ __global__ void CreateSceneObjects(
 	}
 }
 
-__global__ void DeleteSceneObjects(Camera** camera, Intersectable*** objects) {
+__global__ void DeleteSceneObjects(Camera*& camera, Intersectable**& objects) {
 	if (blockIdx.x == 0 && threadIdx.x == 0) {
-		delete *camera;
-		delete[] *objects;
+		delete camera;
+		delete[] objects;
 	}
 }
 
