@@ -22,7 +22,7 @@ public:
 
 protected:
 	__device__ glm::vec3 MakeRandomVectorInUnitSphere(curandState_t* const random_state) const {
-		glm::vec3 v{};
+		glm::vec3 v;
 		do {
 			const auto x = curand_uniform(random_state);
 			const auto y = curand_uniform(random_state);
