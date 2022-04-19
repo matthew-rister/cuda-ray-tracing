@@ -6,10 +6,10 @@ namespace rt {
 class Material;
 
 struct Intersection {
-	glm::vec3 point{}, normal{};
-	float t{};
-	bool front_facing{}, hit{};
-	const Material* material{};
+	glm::vec3 point, normal;
+	float t;
+	bool front_facing, hit = false;
+	const Material* material;
 };
 
 class Intersectable {
