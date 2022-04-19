@@ -26,9 +26,9 @@ __global__ void CreateSceneObjects(
 	if (blockIdx.x != 0 || threadIdx.x != 0) return;
 
 	aspect_ratio = 16.f / 9.f;
-	image_height = 1440;
+	image_height = 440;
 	image_width = static_cast<int>(aspect_ratio * static_cast<float>(image_height));
-	samples = 500;
+	samples = 50;
 	max_depth = 50;
 	camera = new Camera{glm::vec3{13.f, 2.f, 3.f}, glm::vec3{0.f}, aspect_ratio, 20.f};
 
@@ -76,9 +76,12 @@ __global__ void CreateSceneObjects(
 	}
 }
 
-__global__ void DeleteSceneObjects(Camera*& camera, Intersectable**& objects) {
+__global__ void DeleteSceneObjects(Camera*& camera, Intersectable**& objects, const int& size) {
 	if (blockIdx.x == 0 && threadIdx.x == 0) {
 		delete camera;
+		for (auto i = 0; i < size; ++i) {
+			delete objects[i];
+		}
 		delete[] objects;
 	}
 }
@@ -92,7 +95,7 @@ struct Scene final : CudaManaged<Scene> {
 	}
 
 	~Scene() {
-		DeleteSceneObjects<<<1, 1>>>(camera, objects);
+		DeleteSceneObjects<<<1, 1>>>(camera, objects, size);
 		CHECK_CUDA_ERRORS_NOTHROW(cudaGetLastError());
 		CHECK_CUDA_ERRORS_NOTHROW(cudaDeviceSynchronize());
 	}
