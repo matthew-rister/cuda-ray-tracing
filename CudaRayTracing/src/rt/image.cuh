@@ -22,7 +22,7 @@ public:
 
 	static constexpr int kMaxColorValue = std::numeric_limits<Color>::max();
 
-	Image(const int width, const int height) noexcept : width_{width}, height_{height} {
+	Image(const int width, const int height) : width_{width}, height_{height} {
 		CHECK_CUDA_ERRORS(cudaMallocManaged(reinterpret_cast<void**>(&frame_buffer_), sizeof(Pixel) * width_* height_));
 	}
 
