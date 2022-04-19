@@ -92,7 +92,7 @@ struct Scene final : CudaManaged<Scene> {
 	}
 
 	~Scene() {
-		DeleteSceneObjects<<<1, 1>>>(&camera, &objects);
+		DeleteSceneObjects<<<1, 1>>>(camera, objects);
 		CHECK_CUDA_ERRORS_NOTHROW(cudaGetLastError());
 		CHECK_CUDA_ERRORS_NOTHROW(cudaDeviceSynchronize());
 	}
