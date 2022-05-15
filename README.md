@@ -12,7 +12,7 @@ tracked using separate git branches. Additionally, a non-CUDA implementation for
 ### Performance
 
 In contrast to the original implementation, which can take several hours to finish rendering the final scene, this CUDA
-implementation finishes in about 7 minutes using an NVIDIA 3080 TI. Note this is without the use of 
+implementation finishes in about 7 minutes using an NVIDIA 3080 Ti. Note this is without the use of 
 additional acceleration structures which could be used to further reduce the amount of time needed to render a scene.
 
 ## How to Run
